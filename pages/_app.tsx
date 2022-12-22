@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
+import "regenerator-runtime";
 
 export default function App({ Component, pageProps }: AppProps) {
   dayjs.extend(customParseFormat);

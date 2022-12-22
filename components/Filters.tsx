@@ -1,5 +1,7 @@
-import { useMemo } from "react";
-import { Row } from "react-table";
+import dayjs from "dayjs";
+import { Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Row, useAsyncDebounce } from "react-table";
 
 export function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter },
@@ -19,7 +21,9 @@ export function DefaultColumnFilter({
         setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
       }}
       placeholder={`Search ${count} records...`}
-      className="rounded-sm px-2 py-1"
+      className={`rounded-sm outline-none px-2 w-full py-1 text-sm hover:bg-zinc-100 focus:bg-zinc-100 transition-all duration-200 ${
+        filterValue ? "bg-zinc-100" : "bg-zinc-300/50"
+      }`}
     />
   );
 }
@@ -53,7 +57,7 @@ export function SelectColumnFilter({
       onChange={(e) => {
         setFilter(e.target.value || undefined);
       }}
-      className="rounded-sm px-2 py-1"
+      className="rounded-sm px-2 py-1 text-sm w-full"
     >
       <option value="">All</option>
       {options.map((option, i) => (
@@ -65,10 +69,7 @@ export function SelectColumnFilter({
   );
 }
 
-// This is a custom filter UI that uses a
-// slider to set the filter value between a column's
-// min and max values
-export function SliderColumnFilter({
+export function DateColumnFilter({
   column: { filterValue, setFilter, preFilteredRows, id },
 }: {
   column: {
@@ -78,97 +79,120 @@ export function SliderColumnFilter({
     id: any;
   };
 }) {
-  // Calculate the min and max
-  // using the preFilteredRows
-
-  const [min, max] = useMemo(() => {
-    let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
-    let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
-    preFilteredRows.forEach((row: Row) => {
-      min = Math.min(row.values[id], min);
-      max = Math.max(row.values[id], max);
-    });
-    return [min, max];
-  }, [id, preFilteredRows]);
-
   return (
-    <>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={filterValue || min}
+    <div className="flex flex-col gap-1 w-full">
+      <select
+        value={filterValue ? filterValue[0] : "all"}
         onChange={(e) => {
-          setFilter(parseInt(e.target.value, 10));
+          const val = e.target.value;
+          setFilter(
+            val == "all" ? undefined : `${val}${dayjs().format("MM-DD-YYYY")}`
+          );
+          console.log(dayjs().format("MM-DD-YYYY"));
         }}
-      />
-      <button onClick={() => setFilter(undefined)}>Off</button>
-    </>
+        className="rounded-sm px-2 py-1 text-sm"
+      >
+        <option value="all">All</option>
+        <option value="=">During</option>
+        <option value="<">Before</option>
+        <option value=">">After</option>
+      </select>
+      {filterValue && (
+        <input
+          type="date"
+          className={`rounded-sm text-sm px-2 py-1 transition-all duration-200 ${
+            filterValue
+              ? "bg-zinc-100 hover:bg-zinc-100 focus:bg-zinc-100"
+              : "bg-zinc-300/50 cursor-not-allowed opacity-20"
+          }`}
+          value={filterValue ? filterValue.slice(1) : ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            setFilter(val == "all" ? undefined : `${filterValue[0]}${val}`);
+          }}
+        />
+      )}
+    </div>
   );
 }
 
-// This is a custom UI for our 'between' or number range
-// filter. It uses two number boxes and filters rows to
-// ones that have values between the two
-export function NumberRangeColumnFilter({
-  column: { filterValue = [], preFilteredRows, setFilter, id },
+// Define a default UI for filtering
+export function GlobalFilter({
+  preGlobalFilteredRows,
+  globalFilter,
+  setGlobalFilter,
+}: {
+  preGlobalFilteredRows: any;
+  globalFilter: any;
+  setGlobalFilter: any;
+}) {
+  const count = preGlobalFilteredRows.length;
+  const [value, setValue] = useState(globalFilter);
+  const onChange = useAsyncDebounce((value) => {
+    setGlobalFilter(value || undefined);
+  }, 200);
+
+  return (
+    <div className="relative w-full">
+      <Search className="absolute left-1 h-full" />
+      <input
+        value={value || ""}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+        placeholder={`Search ${count} records...`}
+        className={`rounded-sm outline-none border-none w-full pl-9 px-2 py-1 hover:bg-zinc-300 focus:bg-zinc-300 transition-all duration-200 ${
+          value ? "bg-zinc-300" : "bg-zinc-300/50"
+        }`}
+      />
+    </div>
+  );
+}
+
+export function TimeColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
 }: {
   column: {
     filterValue: any;
-    preFilteredRows: any;
     setFilter: any;
+    preFilteredRows: any;
     id: any;
   };
 }) {
-  const [min, max] = useMemo(() => {
-    let min = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
-    let max = preFilteredRows.length ? preFilteredRows[0].values[id] : 0;
-    preFilteredRows.forEach((row: Row) => {
-      min = Math.min(row.values[id], min);
-      max = Math.max(row.values[id], max);
-    });
-    return [min, max];
-  }, [id, preFilteredRows]);
-
   return (
-    <div
-      style={{
-        display: "flex",
-      }}
-    >
-      <input
-        value={filterValue[0] || ""}
-        type="number"
+    <div className="flex flex-col gap-1 w-full">
+      <select
+        value={filterValue ? filterValue[0] : "all"}
         onChange={(e) => {
           const val = e.target.value;
-          setFilter((old = []) => [
-            val ? parseInt(val, 10) : undefined,
-            old[1],
-          ]);
+          setFilter(
+            val == "all" ? undefined : `${val}${dayjs().format("HH:mm")}`
+          );
+          console.log(dayjs().format("HH:mm"));
         }}
-        placeholder={`Min (${min})`}
-        style={{
-          width: "70px",
-          marginRight: "0.5rem",
-        }}
-      />
-      to
-      <input
-        value={filterValue[1] || ""}
-        type="number"
-        onChange={(e) => {
-          const val = e.target.value;
-          setFilter((old = []) => [
-            old[0],
-            val ? parseInt(val, 10) : undefined,
-          ]);
-        }}
-        placeholder={`Max (${max})`}
-        style={{
-          width: "70px",
-          marginLeft: "0.5rem",
-        }}
-      />
+        className="rounded-sm px-2 py-1 text-sm"
+      >
+        <option value="all">All</option>
+        <option value="=">During</option>
+        <option value="<">Before</option>
+        <option value=">">After</option>
+      </select>
+      {filterValue && (
+        <input
+          type="time"
+          className={`rounded-sm text-sm px-2 py-1 transition-all duration-200 ${
+            filterValue
+              ? "bg-zinc-100 hover:bg-zinc-100 focus:bg-zinc-100"
+              : "bg-zinc-300/50 cursor-not-allowed opacity-20"
+          }`}
+          value={filterValue ? filterValue.slice(1) : ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            setFilter(val == "all" ? undefined : `${filterValue[0]}${val}`);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function Dashboard() {
   const [users, setUsers] = useState<Appointment[] | undefined>(undefined);
 
   return (
-    <div className="h-screen bg-zinc-100 flex flex-col">
+    <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
       <nav className="flex flex-row justify-between items-center px-4 py-1 bg-red-900 border-b-2 border-zinc-300">
         <div className="flex flex-row items-center">
           <Image alt="Logo" width={40} height={40} src="/favicon.png" />
@@ -26,7 +26,7 @@ export default function Dashboard() {
       </nav>
       <div className="flex flex-row flex-grow w-full">
         <Sidebar section={section} setSection={setSection} />
-        <div className="flex flex-col max-w-calc(100% - 10rem) overflow-x-hidden">
+        <div className="flex flex-col w-full overflow-x-hidden">
           {section === "schedule" ? (
             <Schedule
               appointments={appointments}

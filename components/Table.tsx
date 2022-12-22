@@ -5,6 +5,9 @@ import {
   usePagination,
   useFilters,
   Row,
+  useGlobalFilter,
+  useBlockLayout,
+  useResizeColumns,
 } from "react-table";
 import type { Column } from "react-table";
 import {
@@ -19,7 +22,7 @@ import {
 import getTagColor from "../utils/getTagColor";
 import { useRouter } from "next/router";
 import { matchSorter } from "match-sorter";
-import { DefaultColumnFilter } from "./Filters";
+import { DefaultColumnFilter, GlobalFilter } from "./Filters";
 
 function fuzzyTextFilterFn(rows: Row[], id: any, filterValue: string) {
   return matchSorter(rows, filterValue, {
@@ -55,8 +58,6 @@ export default function Table({
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
-    visibleColumns,
     prepareRow,
     page,
     canPreviousPage,
@@ -66,7 +67,10 @@ export default function Table({
     gotoPage,
     nextPage,
     previousPage,
+    state,
     setPageSize,
+    preGlobalFilteredRows,
+    setGlobalFilter,
     state: { pageIndex, pageSize },
   } = useTable(
     {
@@ -77,15 +81,21 @@ export default function Table({
       filterTypes,
     },
     useFilters,
+    useGlobalFilter,
     useSortBy,
     usePagination
   );
 
   return (
     <>
-      <div className="h-full block max-w-full overflow-x-scroll">
+      <GlobalFilter
+        preGlobalFilteredRows={preGlobalFilteredRows}
+        globalFilter={state.globalFilter}
+        setGlobalFilter={setGlobalFilter}
+      />
+      <div className="h-full block max-w-full overflow-x-auto flex-grow">
         <table
-          className="border-2 border-zinc-300 border-collapse"
+          className="border-2 border-zinc-300 border-collapse mt-2 mb-4 w-full"
           {...getTableProps()}
         >
           <thead>
@@ -94,11 +104,13 @@ export default function Table({
                 {headerGroup.headers.map((column: any, c) => (
                   <th
                     {...column.getHeaderProps()}
-                    className="border-2 border-zinc-300 text-left px-2 py-1 bg-zinc-200/70 font-display whitespace-nowrap select-none"
+                    className={`border-2 w-[1%] border-zinc-300 text-left px-2 py-1 bg-zinc-200/70 font-display whitespace-nowrap select-none ${
+                      column.collapse ? "w-[0.0000000001%]" : ""
+                    }`}
                     key={c}
                   >
-                    <div className="flex flex-col gap-1">
-                      <div className="flex flex-row w-full justify-between my-2 items-center">
+                    <div className="flex flex-col my-2 gap-2">
+                      <div className="flex flex-row w-full justify-between items-center">
                         <span>{column.render("Header")}</span>
                         <span
                           className="w-8 h-8 flex justify-center items-center cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 rounded-lg"
@@ -134,14 +146,18 @@ export default function Table({
                   {row.cells.map((cell, c) => {
                     return (
                       <td
-                        className={`border-[1px] border-zinc-300 px-2 py-2 ${
+                        className={`border-[1px] break-words w-[1%] border-zinc-300 px-2 py-2 text-sm ${
                           cell.column.Header == "Status"
                             ? "text-center capitalize " +
                               getTagColor(cell.value)
                             : cell.column.Header == "Student"
-                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200"
+                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 hover:underline"
                             : cell.column.Header == "Topic"
-                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 font-semibold"
+                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 font-semibold hover:underline"
+                            : ""
+                        } ${
+                          (cell.column as any).collapse
+                            ? "w-[0.0000000001%]"
                             : ""
                         }`}
                         {...cell.getCellProps()}
@@ -172,7 +188,7 @@ export default function Table({
       <div className="flex flex-row justify-between w-full">
         <div className="flex flex-row">
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
             onClick={() => {
               gotoPage(0);
             }}
@@ -181,7 +197,7 @@ export default function Table({
             <ChevronsLeft />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
             onClick={() => {
               if (canPreviousPage) previousPage();
             }}
@@ -190,7 +206,7 @@ export default function Table({
             <ChevronLeft />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
             onClick={() => {
               if (canNextPage) nextPage();
             }}
@@ -199,7 +215,7 @@ export default function Table({
             <ChevronRight />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
             onClick={() => {
               gotoPage(pageCount - 1);
             }}
@@ -222,7 +238,7 @@ export default function Table({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[10, 30, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>
