@@ -11,7 +11,6 @@ import Drawer from "./base/Drawer";
 import { useState } from "react";
 import { User } from "../utils/types";
 import dayjs from "dayjs";
-import { count } from "console";
 import toast from "react-hot-toast";
 import supabase from "../utils/client";
 
@@ -104,7 +103,7 @@ export default function NewStudent() {
                 newStudent.phone_number
               )
             }
-            className="px-6 py-2 bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-red-800 hover:bg-red-800/80 transition-all"
+            className="px-6 py-2 bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-red-800 hover:bg-emerald-700 transition-all"
           >
             Save
           </button>

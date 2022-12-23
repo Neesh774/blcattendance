@@ -41,13 +41,15 @@ export default function Appointment({
         </span>
         &mdash;
         <span>
-          {dayjs(appointment.start_time, "HH:mm:SS")
+          {dayjs(appointment.end_time, "HH:mm:SS")
             .set("date", dayjs().get("date"))
-            .format(" h:mm A")}
+            .format(" h:mm A ")}
         </span>
       </p>
       <h1 className="text-text-400 text-xl">
-        {appointment.user?.student_first + " " + appointment.user?.student_last}
+        {(appointment.user?.student_first ?? "John") +
+          " " +
+          (appointment.user?.student_last ?? "Smith")}
       </h1>
       <h2 className="text-text-300 text-lg">{appointment.topic}</h2>
       <button

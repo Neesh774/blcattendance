@@ -1,22 +1,26 @@
 import { Loader2, Plus, Search, User, Users } from "lucide-react";
 import Modal from "./base/Modal";
-import { useEffect, useMemo, useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Column } from "react-table";
 import { SelectColumnFilter } from "./Filters";
 import { User as UserType } from "../utils/types";
 import Table from "./base/Table";
 import dayjs from "dayjs";
+import useStudents from "../utils/useStudents";
 
 export default function UserSelect({
   selected,
   setSelected,
-  students,
+  target,
+  fullObj,
 }: {
   selected: string;
-  setSelected: (id: string) => void;
-  students: UserType[] | undefined;
+  setSelected: ((id: string) => void) | ((id: UserType) => void);
+  target?: ReactElement;
+  fullObj?: boolean;
 }) {
   const [name, setName] = useState("");
+  const students = useStudents();
   const columns = useMemo<Column[]>(
     () => [
       {
@@ -58,12 +62,18 @@ export default function UserSelect({
           onClick={openModal}
           className="flex flex-row w-fit gap-2 text-text-300 border-2 border-zinc-300 font-display rounded-sm items-center hover:bg-zinc-200/30 px-2 py-1 transition-all duration-150"
         >
-          {selected ? (
-            <User className="w-5 h-5" />
+          {target ? (
+            <>{target}</>
           ) : (
-            <Users className="w-5 h-5" />
+            <>
+              {selected ? (
+                <User className="w-5 h-5" />
+              ) : (
+                <Users className="w-5 h-5" />
+              )}
+              <span>{selected ? name : "Select Student"}</span>
+            </>
           )}
-          <span>{selected ? name : "Select Student"}</span>
         </button>
       )}
       header={
@@ -82,7 +92,7 @@ export default function UserSelect({
                 hideFilters: true,
                 selection: true,
                 setSelection: (student) => {
-                  setSelected(student.id);
+                  setSelected(fullObj ? student : student.id);
                   setName(student.student_first + " " + student.student_last);
                   closeModal();
                 },

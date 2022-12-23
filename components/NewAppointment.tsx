@@ -106,7 +106,7 @@ export default function NewAppointment({
                   newAppointment.date
                 )
               }
-              className="px-6 py-2 bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-red-800 hover:bg-red-800/80 transition-all"
+              className="px-6 py-2 bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-red-800 hover:bg-emerald-700 transition-all"
             >
               Save
             </button>
@@ -139,7 +139,6 @@ export default function NewAppointment({
               className="py-1 px-3 rounded-sm bg-zinc-200/50 w-60 outline-none border-2 focus:border-zinc-400"
             />
             <UserSelect
-              students={students}
               selected={newAppointment.user}
               setSelected={(id: string) => {
                 setNewAppointment((prev) => {

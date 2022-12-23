@@ -1,110 +1,28 @@
-import { useEffect, useState } from "react";
 import { Appointment as AppointmentType } from "../utils/types";
-import supabase from "../utils/client";
 import dayjs from "dayjs";
 import Appointment from "../components/Appointment";
 import { Apple, Loader2 } from "lucide-react";
 import Image from "next/image";
+import useAppointments from "../utils/useAppointments";
 
 export default function SignIn() {
-  const [appointments, setAppointments] = useState<
-    AppointmentType[] | undefined
-  >(undefined);
+  const allAppointments = useAppointments();
 
   const filterAppointments = (appointments: AppointmentType[]) => {
     return appointments.filter((a) => {
       const startTime = dayjs(a.start_time, "HH:mm:SS");
-      startTime.set("date", dayjs().get("date"));
+      const date = dayjs(a.date, "YYY-MM-DD");
       return (
-        startTime.isAfter(dayjs().subtract(30, "minutes")) &&
-        startTime.isBefore(dayjs().add(30, "minutes")) &&
+        startTime.isAfter(dayjs().subtract(30, "minute")) &&
+        startTime.isBefore(dayjs().add(30, "minute")) &&
+        date.isSame(dayjs(), "date") &&
         a.status == "scheduled"
       );
     });
   };
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select(
-          `
-          *,
-          user (
-            *
-          )
-        `
-        )
-        .order("start_time", { ascending: true })
-        .filter("status", "eq", "scheduled");
-      if (error) {
-        console.error(error);
-      } else {
-        setAppointments(filterAppointments(data ?? []));
-      }
-    };
-    fetchAppointments();
-    const createChannel = () => {
-      return supabase
-        .channel("blc")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "appointments",
-          },
-          async (payload) => {
-            console.log(payload);
-            const appointment = payload.new as AppointmentType;
-            const user = await supabase
-              .from("users")
-              .select()
-              .eq("id", appointment.user)
-              .single();
-            if (payload.eventType == "UPDATE") {
-              setAppointments((appointments) => {
-                const newAppointments =
-                  appointments?.map((a) => {
-                    if (a.id == appointment.id) {
-                      return { ...appointment, user: user.data };
-                    }
-                    return a;
-                  }) || [];
-                if (!newAppointments.some((a) => a.id == appointment.id)) {
-                  newAppointments.push({
-                    ...appointment,
-                    user: user.data,
-                  } as AppointmentType);
-                }
-                return filterAppointments(newAppointments ?? []);
-              });
-            } else if (payload.eventType == "INSERT") {
-              setAppointments((appointments) => {
-                return filterAppointments([
-                  ...(appointments ?? []),
-                  { ...appointment, user: user.data },
-                ]);
-              });
-            } else if (payload.eventType == "DELETE") {
-              setAppointments((appointments) => {
-                return filterAppointments(
-                  appointments?.filter((a) => a.id != appointment.id) ?? []
-                );
-              });
-            }
-          }
-        )
-        .subscribe((status, err) => {
-          console.log(status);
-        });
-    };
-    const appointmentsChannel = createChannel();
-
-    return () => {
-      appointmentsChannel.unsubscribe();
-    };
-  }, []);
+  const appointments = filterAppointments(allAppointments ?? []);
+  console.log(appointments);
 
   return (
     <div className="h-screen bg-zinc-100 flex flex-col">

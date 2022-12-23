@@ -10,45 +10,17 @@ import NewAppointment from "../components/NewAppointment";
 import toast from "react-hot-toast";
 import supabase from "../utils/client";
 import NewStudent from "../components/NewStudent";
+import useStudents from "../utils/useStudents";
+import useAppointments from "../utils/useAppointments";
 
 export default function Dashboard({
   section,
 }: {
   section: "schedule" | "users" | undefined;
 }) {
-  const [users, setUsers] = useState<User[] | undefined>(undefined);
-  const [appointments, setAppointments] = useState<Appointment[] | undefined>(
-    undefined
-  );
+  const users = useStudents();
+  const appointments = useAppointments();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: appointments, error: appointmentsError } = await supabase
-        .from("appointments")
-        .select(
-          `
-          *,
-          user (
-            *
-          )`
-        )
-        .not("user", "is", null);
-      if (appointmentsError) {
-        console.error(appointmentsError);
-      }
-      const { data: users, error: usersError } = await supabase
-        .from("users")
-        .select("*");
-      if (usersError) {
-        console.error(usersError);
-      }
-
-      setAppointments(appointments as Appointment[]);
-      setUsers(users as User[]);
-    };
-
-    fetchData();
-  }, []);
   return (
     <div className="bg-zinc-100 flex flex-col h-screen">
       <nav className="flex flex-row justify-between items-center px-4 py-1 h-14 bg-red-900 border-b-2 border-zinc-300">
