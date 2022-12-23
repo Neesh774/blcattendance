@@ -7,7 +7,11 @@ import dayjs from "dayjs";
 import { toast } from "react-hot-toast";
 import supabase from "../utils/client";
 
-export default function NewAppointment({ students }: { students: User[] }) {
+export default function NewAppointment({
+  students,
+}: {
+  students: User[] | undefined;
+}) {
   const [newAppointment, setNewAppointment] = useState<AppointmentUserId>({
     topic: "",
     user: "",

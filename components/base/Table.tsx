@@ -79,7 +79,7 @@ export default function Table({
     {
       columns,
       data,
-      initialState: { pageIndex: 0 },
+      initialState: { pageIndex: 0, pageSize: 10 },
       defaultColumn,
       filterTypes,
     },
@@ -252,7 +252,7 @@ export default function Table({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 30, 50, 100].map((pageSize) => (
+            {[30, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>

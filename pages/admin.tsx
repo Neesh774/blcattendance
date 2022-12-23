@@ -13,16 +13,45 @@ import NewStudent from "../components/NewStudent";
 
 export default function Dashboard({
   section,
-  users,
-  appointments,
 }: {
   section: "schedule" | "users" | undefined;
-  users: User[];
-  appointments: Appointment[];
 }) {
+  const [users, setUsers] = useState<User[] | undefined>(undefined);
+  const [appointments, setAppointments] = useState<Appointment[] | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: appointments, error: appointmentsError } = await supabase
+        .from("appointments")
+        .select(
+          `
+          *,
+          user (
+            *
+          )`
+        )
+        .not("user", "is", null);
+      if (appointmentsError) {
+        console.error(appointmentsError);
+      }
+      const { data: users, error: usersError } = await supabase
+        .from("users")
+        .select("*");
+      if (usersError) {
+        console.error(usersError);
+      }
+
+      setAppointments(appointments as Appointment[]);
+      setUsers(users as User[]);
+    };
+
+    fetchData();
+  }, []);
   return (
-    <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
-      <nav className="flex flex-row justify-between items-center px-4 py-1 bg-red-900 border-b-2 border-zinc-300">
+    <div className="bg-zinc-100 flex flex-col h-screen">
+      <nav className="flex flex-row justify-between items-center px-4 py-1 h-14 bg-red-900 border-b-2 border-zinc-300">
         <div className="flex flex-row items-center">
           <Image alt="Logo" width={40} height={40} src="/favicon.png" />
           <h1 className="text-2xl font-medium font-serif text-white ml-2">
@@ -37,9 +66,9 @@ export default function Dashboard({
           </span>
         </div>
       </nav>
-      <div className="flex flex-row flex-grow w-full">
+      <div className="flex flex-row flex-grow w-full h-[calc(100vh-3.5rem)]">
         <Sidebar section={section} />
-        <div className="flex flex-col w-full overflow-x-hidden">
+        <div className="flex flex-col w-full overflow-y-auto overflow-x-hidden">
           {section === "schedule" ? (
             <Schedule appointments={appointments} />
           ) : (
@@ -52,32 +81,11 @@ export default function Dashboard({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data: appointments, error: appointmentsError } = await supabase
-    .from("appointments")
-    .select(
-      `
-    *,
-    user (
-      *
-    )`
-    )
-    .not("user", "is", null);
-  if (appointmentsError) {
-    console.error(appointmentsError);
-  }
-  const { data: users, error: usersError } = await supabase
-    .from("users")
-    .select();
-  if (usersError) {
-    console.error(usersError);
-  }
   return {
     props: {
       section: context.query.s
         ? (context.query.s as "schedule" | "users")
         : "schedule",
-      appointments,
-      users,
     },
   };
 };

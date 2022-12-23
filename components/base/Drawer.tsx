@@ -32,11 +32,11 @@ export default function Drawer({
             e.stopPropagation();
           }}
         >
-          <div className="flex flex-grow flex-col gap-2 pt-8 px-4">
+          <div className="flex flex-grow flex-col gap-2 pt-8 px-4 pb-4 h-[calc(100vh-4rem)] overflow-y-auto">
             {header(closeDrawer)}
             {children}
           </div>
-          <div className="bg-zinc-200/50 border-t border-zinc-300 px-4 py-6">
+          <div className="bg-zinc-200/50 border-t border-zinc-300 h-16 flex items-center px-4">
             {footer(closeDrawer)}
           </div>
         </div>

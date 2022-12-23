@@ -41,7 +41,7 @@ export default function Modal({
         onClick={() => setIsOpen(false)}
       >
         <div
-          className={`lg:w-1/2 w-full h-full lg:h-fit rounded-lg bg-zinc-100 z-50 flex flex-col px-2 pb-8 pt-2 transition-all duration-150 ease-out ${
+          className={`xl:w-1/2 lg:w-4/5 w-full h-full lg:h-fit rounded-lg bg-zinc-100 z-50 flex flex-col px-2 pb-8 pt-2 transition-all duration-150 ease-out ${
             !isOpen
               ? "opacity-50 lg:opacity-0 pointer-events-none translate-y-24 lg:translate-y-12"
               : "opacity-100 translate-y-0 h-fit"

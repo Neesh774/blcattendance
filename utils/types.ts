@@ -1,13 +1,13 @@
 export type User = {
-    id: number;
-    created_at: string;
+    id?: number;
+    created_at?: string;
     student_first: string;
     student_last: string;
     parent_first: string;
     parent_last: string;
     parent_email: string;
     phone_number: string;
-    grade: number;
+    classOf: number;
     school: string;
     notes: string;
 }

@@ -6,6 +6,7 @@ import supabase from "../utils/client";
 import { Loader2 } from "lucide-react";
 import Table from "./base/Table";
 import toast from "react-hot-toast";
+import dayjs from "dayjs";
 
 export default function Students({
   students,
@@ -20,7 +21,7 @@ export default function Students({
       },
       {
         Header: "Grade",
-        accessor: "grade",
+        accessor: (row: any) => 13 - (row.classOf - dayjs().year()),
         Filter: SelectColumnFilter,
       },
       {

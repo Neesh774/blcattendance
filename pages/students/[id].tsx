@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import Table from "../../components/base/Table";
 import UserAppointments from "../../components/UserAppointments";
+import dayjs from "dayjs";
 
 export default function Student({
   user,
@@ -77,7 +78,13 @@ export default function Student({
                     <span className="text-lg text-text-300">
                       {user.student_last}
                     </span>
-                    <span className="text-lg text-text-300">{user.grade}</span>
+                    <span className="text-lg text-text-300">
+                      {13 - (user.classOf - dayjs().year())}
+                      <span className="text-text-200">
+                        {" "}
+                        &#40;Class of {user.classOf}&#41;
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">

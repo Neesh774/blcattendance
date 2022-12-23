@@ -1,10 +1,11 @@
-import { Plus, Search, User, Users } from "lucide-react";
+import { Loader2, Plus, Search, User, Users } from "lucide-react";
 import Modal from "./base/Modal";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Column } from "react-table";
 import { SelectColumnFilter } from "./Filters";
 import { User as UserType } from "../utils/types";
 import Table from "./base/Table";
+import dayjs from "dayjs";
 
 export default function UserSelect({
   selected,
@@ -13,7 +14,7 @@ export default function UserSelect({
 }: {
   selected: string;
   setSelected: (id: string) => void;
-  students: UserType[];
+  students: UserType[] | undefined;
 }) {
   const [name, setName] = useState("");
   const columns = useMemo<Column[]>(
@@ -24,7 +25,7 @@ export default function UserSelect({
       },
       {
         Header: "Grade",
-        accessor: "grade",
+        accessor: (row: any) => 13 - (row.classOf - dayjs().year()),
         Filter: SelectColumnFilter,
       },
       {
@@ -43,6 +44,12 @@ export default function UserSelect({
     []
   );
   const studentData = useMemo(() => students ?? [], [students]);
+
+  useEffect(() => {
+    if (!selected) {
+      setName("");
+    }
+  }, [selected]);
 
   return (
     <Modal
@@ -67,19 +74,25 @@ export default function UserSelect({
     >
       {(closeModal) => (
         <div className="flex flex-col gap-4 max-h-[30rem] 2xl:max-h-[40rem]">
-          <Table
-            columns={columns}
-            data={studentData}
-            options={{
-              hideFilters: true,
-              selection: true,
-              setSelection: (student) => {
-                setSelected(student.id);
-                setName(student.student_first + " " + student.student_last);
-                closeModal();
-              },
-            }}
-          />
+          {students ? (
+            <Table
+              columns={columns}
+              data={studentData}
+              options={{
+                hideFilters: true,
+                selection: true,
+                setSelection: (student) => {
+                  setSelected(student.id);
+                  setName(student.student_first + " " + student.student_last);
+                  closeModal();
+                },
+              }}
+            />
+          ) : (
+            <div className="flex w-full h-[30%] justify-center items-center">
+              <Loader2 className="mx-auto w-8 h-8 text-red-700 animate-spin" />
+            </div>
+          )}
         </div>
       )}
     </Modal>
