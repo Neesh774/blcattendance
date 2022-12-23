@@ -1,6 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Appointment } from "../utils/types";
-import supabase from "../utils/client";
 import { Row } from "react-table";
 import type { Column } from "react-table";
 import dayjs from "dayjs";
@@ -11,7 +10,6 @@ import {
   SelectColumnFilter,
   TimeColumnFilter,
 } from "./Filters";
-import { toast } from "react-hot-toast";
 
 function dateFilterFn(rows: Row[], id: any, filterValue: string) {
   const type = filterValue[0];
@@ -55,7 +53,7 @@ function timeFilterFn(rows: Row[], id: any, filterValue: string) {
 
 dateFilterFn.autoRemove = (val: string) => !val;
 
-export default function Schedule({
+export default function UserAppointments({
   appointments,
 }: {
   appointments: Appointment[] | undefined;
@@ -70,11 +68,6 @@ export default function Schedule({
         Header: "Status",
         accessor: "status",
         Filter: SelectColumnFilter,
-      },
-      {
-        Header: "Student",
-        accessor: (row: any) =>
-          row.user.student_first + " " + row.user.student_last,
       },
       {
         Header: "Instructor",
@@ -112,7 +105,6 @@ export default function Schedule({
 
   return (
     <div className="flex flex-col w-full p-4 gap-4 flex-grow">
-      <h1 className="font-display text-3xl font-bold">BLC Appointments</h1>
       {appointments ? (
         <Table columns={columns} data={appointmentsData} />
       ) : (

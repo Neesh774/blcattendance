@@ -32,11 +32,19 @@ export default function Appointment({
     }
   };
   return (
-    <div className="flex flex-col w-fit rounded-lg bg-zinc-50 p-3 shadow-lg">
+    <div className="flex flex-col w-72 rounded-lg bg-zinc-50 p-3 shadow-lg">
       <p className="text-text-300 capitalize mb-1">
-        <span>{dayjs(appointment.start_time).format("h:mm A ")}</span>
+        <span>
+          {dayjs(appointment.start_time, "HH:mm:SS")
+            .set("date", dayjs().get("date"))
+            .format("h:mm A ")}
+        </span>
         &mdash;
-        <span>{dayjs(appointment.end_time).format(" h:mm A")}</span>
+        <span>
+          {dayjs(appointment.start_time, "HH:mm:SS")
+            .set("date", dayjs().get("date"))
+            .format(" h:mm A")}
+        </span>
       </p>
       <h1 className="text-text-400 text-xl">
         {appointment.user?.student_first + " " + appointment.user?.student_last}

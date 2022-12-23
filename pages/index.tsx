@@ -12,12 +12,15 @@ export default function SignIn() {
   >(undefined);
 
   const filterAppointments = (appointments: AppointmentType[]) => {
-    return appointments.filter(
-      (a) =>
-        dayjs(a.start_time).isAfter(dayjs().subtract(30, "minutes")) &&
-        dayjs(a.start_time).isBefore(dayjs().add(30, "minutes")) &&
+    return appointments.filter((a) => {
+      const startTime = dayjs(a.start_time, "HH:mm:SS");
+      startTime.set("date", dayjs().get("date"));
+      return (
+        startTime.isAfter(dayjs().subtract(30, "minutes")) &&
+        startTime.isBefore(dayjs().add(30, "minutes")) &&
         a.status == "scheduled"
-    );
+      );
+    });
   };
 
   useEffect(() => {

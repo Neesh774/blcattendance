@@ -4,12 +4,13 @@ import { useMemo, useState } from "react";
 import { Row, useAsyncDebounce } from "react-table";
 
 export function DefaultColumnFilter({
-  column: { filterValue, preFilteredRows, setFilter },
+  column: { filterValue, preFilteredRows, setFilter, Header },
 }: {
   column: {
     filterValue: any;
     preFilteredRows: any;
     setFilter: any;
+    Header?: any;
   };
 }) {
   const count = preFilteredRows.length;
@@ -20,9 +21,11 @@ export function DefaultColumnFilter({
       onChange={(e) => {
         setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
       }}
-      placeholder={`Search ${count} records...`}
-      className={`rounded-sm outline-none px-2 w-full py-1 text-sm hover:bg-zinc-100 focus:bg-zinc-100 transition-all duration-200 ${
-        filterValue ? "bg-zinc-100" : "bg-zinc-300/50"
+      placeholder={`Search ${Header.toLowerCase()}s...`}
+      className={`rounded-sm outline-none px-2 w-full py-1 text-sm transition-all duration-200 ${
+        filterValue
+          ? "bg-zinc-100"
+          : "bg-zinc-300/50 hover:bg-zinc-100 focus:bg-zinc-100"
       }`}
     />
   );
@@ -57,7 +60,11 @@ export function SelectColumnFilter({
       onChange={(e) => {
         setFilter(e.target.value || undefined);
       }}
-      className="rounded-sm px-2 py-1 text-sm w-full"
+      className={`rounded-sm px-2 py-1 text-sm w-full transition-all duration-200 ${
+        filterValue
+          ? "bg-zinc-100"
+          : "bg-zinc-300/50 hover:bg-zinc-100 focus:bg-zinc-100"
+      }`}
     >
       <option value="">All</option>
       {options.map((option, i) => (
@@ -88,9 +95,12 @@ export function DateColumnFilter({
           setFilter(
             val == "all" ? undefined : `${val}${dayjs().format("MM-DD-YYYY")}`
           );
-          console.log(dayjs().format("MM-DD-YYYY"));
         }}
-        className="rounded-sm px-2 py-1 text-sm"
+        className={`rounded-sm px-2 py-1 text-sm transition-all duration-200 ${
+          filterValue
+            ? "bg-zinc-100"
+            : "bg-zinc-300/50 hover:bg-zinc-100 focus:bg-zinc-100"
+        }`}
       >
         <option value="all">All</option>
         <option value="=">During</option>
@@ -134,7 +144,7 @@ export function GlobalFilter({
 
   return (
     <div className="relative w-full">
-      <Search className="absolute left-1 h-full" />
+      <Search className="absolute left-1 h-full py-2" />
       <input
         value={value || ""}
         onChange={(e) => {
@@ -171,7 +181,11 @@ export function TimeColumnFilter({
           );
           console.log(dayjs().format("HH:mm"));
         }}
-        className="rounded-sm px-2 py-1 text-sm"
+        className={`rounded-sm px-2 py-1 text-sm transition-all duration-200 ${
+          filterValue
+            ? "bg-zinc-100"
+            : "bg-zinc-300/50 hover:bg-zinc-100 focus:bg-zinc-100"
+        }`}
       >
         <option value="all">All</option>
         <option value="=">During</option>

@@ -19,10 +19,11 @@ import {
   ChevronsRight,
   ChevronsUpDown,
 } from "lucide-react";
-import getTagColor from "../utils/getTagColor";
+import getTagColor from "../../utils/getTagColor";
 import { useRouter } from "next/router";
 import { matchSorter } from "match-sorter";
-import { DefaultColumnFilter, GlobalFilter } from "./Filters";
+import { DefaultColumnFilter, GlobalFilter } from "../Filters";
+import { TableOptions } from "../../utils/types";
 
 function fuzzyTextFilterFn(rows: Row[], id: any, filterValue: string) {
   return matchSorter(rows, filterValue, {
@@ -36,9 +37,11 @@ fuzzyTextFilterFn.autoRemove = (val: string) => !val;
 export default function Table({
   columns,
   data,
+  options,
 }: {
   columns: Column<object>[];
   data: any;
+  options?: TableOptions;
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -129,9 +132,11 @@ export default function Table({
                           )}
                         </span>
                       </div>
-                      <div className="font-medium">
-                        {column.canFilter ? column.render("Filter") : null}
-                      </div>
+                      {!options?.hideFilters && (
+                        <div className="font-medium">
+                          {column.canFilter ? column.render("Filter") : null}
+                        </div>
+                      )}
                     </div>
                   </th>
                 ))}
@@ -142,19 +147,22 @@ export default function Table({
             {page.map((row, r) => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} key={r}>
+                <tr {...row.getRowProps()} key={r} className="group">
                   {row.cells.map((cell, c) => {
                     return (
                       <td
                         className={`border-[1px] break-words w-[1%] border-zinc-300 px-2 py-2 text-sm ${
-                          cell.column.Header == "Status"
-                            ? "text-center capitalize " +
-                              getTagColor(cell.value)
-                            : cell.column.Header == "Student"
-                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 hover:underline"
-                            : cell.column.Header == "Topic"
-                            ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 font-semibold hover:underline"
-                            : ""
+                          !options?.selection
+                            ? cell.column.Header == "Status"
+                              ? "text-center capitalize " +
+                                getTagColor(cell.value)
+                              : cell.column.Header == "Student" ||
+                                cell.column.Header == "Name"
+                              ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 hover:underline"
+                              : cell.column.Header == "Topic"
+                              ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 font-semibold hover:underline"
+                              : ""
+                            : "cursor-pointer group-hover:bg-zinc-300/50 transition-all duration-200 group-hover:underline"
                         } ${
                           (cell.column as any).collapse
                             ? "w-[0.0000000001%]"
@@ -163,15 +171,21 @@ export default function Table({
                         {...cell.getCellProps()}
                         key={c}
                         onClick={() => {
-                          if (cell.column.Header == "Student") {
-                            router.push(
-                              `/students/${(row.original as any).user.id}`
-                            );
-                          }
-                          if (cell.column.Header == "Topic") {
-                            router.push(
-                              `/appointments/${(row.original as any).id}`
-                            );
+                          if (!options?.selection) {
+                            if (cell.column.Header == "Student") {
+                              router.push(
+                                `/students/${(row.original as any).user.id}`
+                              );
+                            } else if (cell.column.Header == "Topic") {
+                              router.push(
+                                `/appointments/${(row.original as any).id}`
+                              );
+                            } else if (cell.column.Header == "Name") {
+                              router.push(`
+                              /students/${(row.original as any).id}`);
+                            }
+                          } else {
+                            options.setSelection(row.original as any);
                           }
                         }}
                       >
@@ -186,9 +200,9 @@ export default function Table({
         </table>
       </div>
       <div className="flex flex-row justify-between w-full">
-        <div className="flex flex-row">
+        <div className="flex flex-row gap-1">
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-300 hover:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-0.5 px-2 rounded-sm"
             onClick={() => {
               gotoPage(0);
             }}
@@ -197,7 +211,7 @@ export default function Table({
             <ChevronsLeft />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-300 hover:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-0.5 px-2 rounded-sm"
             onClick={() => {
               if (canPreviousPage) previousPage();
             }}
@@ -206,7 +220,7 @@ export default function Table({
             <ChevronLeft />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-300 hover:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-0.5 px-2 rounded-sm"
             onClick={() => {
               if (canNextPage) nextPage();
             }}
@@ -215,7 +229,7 @@ export default function Table({
             <ChevronRight />
           </button>
           <button
-            className="bg-zinc-200 hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-1 px-2 border-[1px] border-zinc-400"
+            className="bg-zinc-300 hover:bg-zinc-400 disabled:cursor-not-allowed disabled:opacity-20 transition-all duration-200 py-0.5 px-2 rounded-sm"
             onClick={() => {
               gotoPage(pageCount - 1);
             }}
@@ -232,7 +246,7 @@ export default function Table({
             </strong>{" "}
           </span>
           <select
-            className="bg-zinc-200 hover:bg-zinc-300 transition-all duration-200 py-0.5 px-1 text-sm border-[1px] border-zinc-400"
+            className="rounded-sm px-2 py-1 text-sm transition-all duration-200 bg-zinc-300/50 hover:bg-zinc-300 focus:bg-zinc-300 outline-red-700"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
