@@ -160,14 +160,14 @@ export default function Table({
                                 cell.column.Header == "Name"
                               ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 hover:underline"
                               : cell.column.Header == "Topic"
-                              ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 font-semibold hover:underline"
+                              ? "cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 hover:underline"
                               : ""
                             : "cursor-pointer group-hover:bg-zinc-300/50 transition-all duration-200 group-hover:underline"
                         } ${
                           (cell.column as any).collapse
                             ? "w-[0.0000000001%]"
                             : ""
-                        }`}
+                        } ${(cell.column as any).primary && "font-semibold"}`}
                         {...cell.getCellProps()}
                         key={c}
                         onClick={() => {
@@ -252,7 +252,7 @@ export default function Table({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[30, 50, 100].map((pageSize) => (
+            {[10, 30, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 Show {pageSize}
               </option>

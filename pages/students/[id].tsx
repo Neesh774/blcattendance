@@ -4,13 +4,14 @@ import { Appointment, User } from "../../utils/types";
 import Image from "next/image";
 import Sidebar from "../../components/Sidebar";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Check,
   ChevronDown,
   ChevronRight,
   Loader2,
   Pencil,
+  X,
 } from "lucide-react";
 import Table from "../../components/base/Table";
 import UserAppointments from "../../components/UserAppointments";
@@ -48,6 +49,23 @@ export default function Student({
     setOriginal(data);
   };
 
+  useEffect(() => {
+    if (window) {
+      const showAlert = (e: any) => {
+        if (!deepEquals(user, original)) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      };
+
+      window.addEventListener("beforeunload", showAlert);
+
+      return () => {
+        window.removeEventListener("beforeunload", showAlert);
+      };
+    }
+  }, [user, original]);
+
   return (
     <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
       <nav className="flex flex-row justify-between items-center px-4 py-1 bg-red-900 border-b-2 border-zinc-300">
@@ -68,7 +86,7 @@ export default function Student({
             {user && appointments ? (
               <>
                 <div className="flex flex-row gap-2 w-fit items-center">
-                  <span className="text-4xl font-bold font-display text-text-500 rounded-sm bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-text-200 h-fit">
+                  <span className="text-4xl font-bold font-display text-text-500 rounded-sm bg-transparent h-fit">
                     <div
                       contentEditable
                       spellCheck="false"
@@ -78,12 +96,13 @@ export default function Student({
                           student_first: e.target.textContent ?? "",
                         });
                       }}
-                      className="p-2 outline-none"
-                    >
-                      {user.student_first}
-                    </div>
+                      className="p-2 outline-none border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500"
+                      dangerouslySetInnerHTML={{
+                        __html: user.student_first,
+                      }}
+                    />
                   </span>
-                  <span className="text-4xl font-bold font-display text-text-500 rounded-sm w-fit bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-text-200 h-fit">
+                  <span className="text-4xl font-bold font-display text-text-500 rounded-sm w-fit bg-transparent h-fit">
                     <div
                       contentEditable
                       spellCheck="false"
@@ -93,10 +112,11 @@ export default function Student({
                           student_last: e.target.textContent ?? "",
                         })
                       }
-                      className="p-2 outline-none"
-                    >
-                      {user.student_last}
-                    </div>
+                      className="p-2 outline-none border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500"
+                      dangerouslySetInnerHTML={{
+                        __html: user.student_last,
+                      }}
+                    />
                   </span>
                 </div>
                 <div className="flex flex-col gap-6">
@@ -122,48 +142,74 @@ export default function Student({
                   >
                     <table>
                       <tbody>
-                        <tr>
-                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                            First Name
-                          </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
-                            {user.student_first}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                            Last Name
-                          </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
-                            {user.student_last}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                            Grade
-                          </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
-                            {dayjs().year() >= user.classOf
-                              ? "Graduated"
-                              : 13 - (user.classOf - dayjs().year())}
-                            <span className="text-text-200">
-                              {" "}
-                              &#40;Class of
+                        {original.student_first && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              First Name
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
+                              {user.student_first}
+                            </td>
+                          </tr>
+                        )}
+                        {original.student_last && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              Last Name
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
+                              {user.student_last}
+                            </td>
+                          </tr>
+                        )}
+                        {original.classOf && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              Grade
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
+                              {dayjs().year() >= user.classOf
+                                ? "Graduated"
+                                : 13 - (user.classOf - dayjs().year())}
+                              <span className="text-text-200">
+                                {" "}
+                                &#40;Class of
+                                <input
+                                  type="number"
+                                  className="w-20 text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1 ml-1"
+                                  value={user.classOf}
+                                  onChange={(e) =>
+                                    setUser({
+                                      ...user,
+                                      classOf: parseInt(e.target.value),
+                                    })
+                                  }
+                                />
+                                &#41;
+                              </span>
+                            </td>
+                          </tr>
+                        )}
+                        {original.school && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              School
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
                               <input
-                                type="number"
-                                className="w-20 text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-text-200 rounded-sm px-1 ml-1"
-                                value={user.classOf}
+                                type="text"
+                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
+                                value={user.school}
                                 onChange={(e) =>
                                   setUser({
                                     ...user,
-                                    classOf: parseInt(e.target.value),
+                                    school: e.target.value,
                                   })
                                 }
                               />
-                              &#41;
-                            </span>
-                          </td>
-                        </tr>
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                     <div className="flex flex-col gap-2">
@@ -202,42 +248,46 @@ export default function Student({
                   >
                     <table className="w-full">
                       <tbody>
-                        <tr>
-                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                            First Name
-                          </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
-                            <input
-                              type="text"
-                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-text-200 outline-none rounded-sm px-1"
-                              value={user.parent_first}
-                              onChange={(e) =>
-                                setUser({
-                                  ...user,
-                                  parent_first: e.target.value,
-                                })
-                              }
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                            Last Name
-                          </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
-                            <input
-                              type="text"
-                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-text-200 outline-none rounded-sm px-1"
-                              value={user.parent_last}
-                              onChange={(e) =>
-                                setUser({
-                                  ...user,
-                                  parent_last: e.target.value,
-                                })
-                              }
-                            />
-                          </td>
-                        </tr>
+                        {original.parent_first && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              First Name
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
+                              <input
+                                type="text"
+                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
+                                value={user.parent_first}
+                                onChange={(e) =>
+                                  setUser({
+                                    ...user,
+                                    parent_first: e.target.value,
+                                  })
+                                }
+                              />
+                            </td>
+                          </tr>
+                        )}
+                        {original.parent_last && (
+                          <tr>
+                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                              Last Name
+                            </td>
+                            <td className="py-3 text-lg w-5/6 text-text-300">
+                              <input
+                                type="text"
+                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
+                                value={user.parent_last}
+                                onChange={(e) =>
+                                  setUser({
+                                    ...user,
+                                    parent_last: e.target.value,
+                                  })
+                                }
+                              />
+                            </td>
+                          </tr>
+                        )}
                         <tr>
                           <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
                             Email
@@ -252,26 +302,38 @@ export default function Student({
                                 editEmail ? "" : `mailto:${user.parent_email}`
                               }
                               contentEditable={editEmail}
-                              className={`text-lg whitespace-nowrap px-1 border-2 ${
+                              className={`text-lg whitespace-nowrap px-1 border-2 outline-none  ${
                                 editEmail
-                                  ? "text-text-300 bg-transparent border-text-200 rounded-sm max-w-full"
+                                  ? "text-text-300 bg-transparent border-text-200/20 transition-all focus:border-blue-500 rounded-sm max-w-full min-w-[5rem]"
                                   : "underline border-transparent"
                               }`}
-                              onBlur={(e) =>
-                                setUser({
-                                  ...user,
-                                  parent_email: e.target.innerText,
-                                })
-                              }
-                            >
-                              {user.parent_email}
-                            </a>
+                              onBlur={(e) => {
+                                if (e.target.innerText != "") {
+                                  setUser({
+                                    ...user,
+                                    parent_email: e.target.innerText,
+                                  });
+                                  setEditEmail(false);
+                                }
+                              }}
+                              onBeforeInput={(e: any) => {
+                                if (e.data == "\n") {
+                                  e.preventDefault();
+                                }
+                              }}
+                              onPaste={(e: any) => {
+                                console.log(e);
+                              }}
+                              dangerouslySetInnerHTML={{
+                                __html: user.parent_email,
+                              }}
+                            />
                             <button
                               className="flex flex-row w-fit gap-2 text-text-300 border-2 border-zinc-300 font-display rounded-sm items-center hover:bg-zinc-200/30 p-1 transition-all duration-150"
                               onClick={() => setEditEmail(!editEmail)}
                             >
                               {editEmail ? (
-                                <Check className="w-5 h-5" />
+                                <X className="w-5 h-5 text-red-700" />
                               ) : (
                                 <Pencil className="w-5 h-5" />
                               )}
@@ -283,7 +345,19 @@ export default function Student({
                             Phone
                           </td>
                           <td className="py-3 text-lg w-5/6 text-text-300">
-                            {user.phone_number}
+                            <input
+                              type="tel"
+                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
+                              value={user.phone_number}
+                              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                              required
+                              onChange={(e) => {
+                                setUser({
+                                  ...user,
+                                  phone_number: e.target.value,
+                                });
+                              }}
+                            />
                           </td>
                         </tr>
                       </tbody>

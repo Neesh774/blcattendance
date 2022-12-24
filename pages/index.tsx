@@ -4,6 +4,7 @@ import Appointment from "../components/Appointment";
 import { Apple, Loader2 } from "lucide-react";
 import Image from "next/image";
 import useAppointments from "../utils/useAppointments";
+import { useEffect, useState } from "react";
 
 export default function SignIn() {
   const allAppointments = useAppointments();
@@ -11,18 +12,23 @@ export default function SignIn() {
   const filterAppointments = (appointments: AppointmentType[]) => {
     return appointments.filter((a) => {
       const startTime = dayjs(a.start_time, "HH:mm:SS");
-      const date = dayjs(a.date, "YYY-MM-DD");
+      const date = dayjs(a.date, "YYYY-MM-DD");
       return (
-        startTime.isAfter(dayjs().subtract(30, "minute")) &&
-        startTime.isBefore(dayjs().add(30, "minute")) &&
+        startTime.isAfter(dayjs().subtract(30, "minute"), "minute") &&
+        startTime.isBefore(dayjs().add(30, "minute"), "minute") &&
         date.isSame(dayjs(), "date") &&
         a.status == "scheduled"
       );
     });
   };
 
-  const appointments = filterAppointments(allAppointments ?? []);
-  console.log(appointments);
+  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+
+  useEffect(() => {
+    if (allAppointments) {
+      setAppointments(filterAppointments(allAppointments));
+    }
+  }, [allAppointments]);
 
   return (
     <div className="h-screen bg-zinc-100 flex flex-col">

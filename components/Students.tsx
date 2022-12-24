@@ -18,6 +18,7 @@ export default function Students({
       {
         Header: "Name",
         accessor: (row: any) => row.student_first + " " + row.student_last,
+        primary: true,
       },
       {
         Header: "Grade",

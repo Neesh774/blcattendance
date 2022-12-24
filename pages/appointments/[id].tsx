@@ -62,6 +62,23 @@ export default function Student({
     setOriginal({ ...data, user: appointment.user });
   };
 
+  useEffect(() => {
+    if (window) {
+      const showAlert = (e: any) => {
+        if (!deepEquals(appointment, original)) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      };
+
+      window.addEventListener("beforeunload", showAlert);
+
+      return () => {
+        window.removeEventListener("beforeunload", showAlert);
+      };
+    }
+  }, [appointment, original]);
+
   return (
     <>
       <div className="h-full min-h-screen bg-zinc-100 flex flex-col">

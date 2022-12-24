@@ -20,7 +20,6 @@ export default function useAppointments() {
         `
         )
         .order("start_time", { ascending: true })
-        .filter("status", "eq", "scheduled")
         .not("user", "is", null);
       if (error) {
         console.error(error);

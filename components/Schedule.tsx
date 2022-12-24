@@ -65,6 +65,7 @@ export default function Schedule({
       {
         Header: "Topic",
         accessor: "topic",
+        primary: true,
       },
       {
         Header: "Status",
