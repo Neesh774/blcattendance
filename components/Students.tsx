@@ -21,7 +21,10 @@ export default function Students({
       },
       {
         Header: "Grade",
-        accessor: (row: any) => 13 - (row.classOf - dayjs().year()),
+        accessor: (row: any) =>
+          dayjs().year() >= row.classOf
+            ? "Graduated"
+            : 13 - (row.classOf - dayjs().year()),
         Filter: SelectColumnFilter,
       },
       {

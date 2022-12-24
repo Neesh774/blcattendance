@@ -242,14 +242,14 @@ export default function Student({
                           description: e.target.value,
                         })
                       }
-                      className="text-text-300 rounded-md bg-zinc-200/50 p-4 resize-none border-2 border-text-200"
+                      className="text-text-300 rounded-md bg-zinc-200/50 hover:bg-zinc-200 transition-all duration-300 p-4 resize-none outline-none border-2 border-text-200"
                       value={appointment.description}
                     />
                   </div>
                 </>
               ) : (
-                <div>
-                  <Loader2 />
+                <div className="w-full flex justify-center">
+                  <Loader2 className="animate-spin w-10 h-10 text-red-800" />
                 </div>
               )}
             </div>
@@ -265,7 +265,7 @@ export default function Student({
                 <div className="flex flex-row gap-4 items-center">
                   <button
                     onClick={() => {
-                      setAppointment(initAppointment);
+                      setAppointment(original);
                     }}
                     className="rounded-sm hover:bg-white/10 text-text-100 px-2 py-1 transition-all"
                   >
