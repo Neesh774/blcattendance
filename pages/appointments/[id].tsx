@@ -21,6 +21,7 @@ import UserSelect from "../../components/UserSelect";
 import { deepEquals } from "../../utils/deepEquals";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
+import { formatDays } from "../../utils/formatDays";
 
 export default function Student({
   initAppointment,
@@ -52,6 +53,30 @@ export default function Student({
     setOriginal({ ...data, user: appointment.user });
   };
 
+  const saveAllFuture = async () => {
+    const { id, ...appt } = appointment;
+
+    const { data, error } = await supabase
+      .from("appointments")
+      .update({
+        ...appt,
+        user: appointment.user.id,
+        recurring: appointment.recurring.id,
+      })
+      .gte("date", appointment.date)
+      .eq("recurring", appointment.recurring.id)
+      .select(`*, recurring(*), user(*)`);
+    if (error) {
+      console.error(error);
+      toast.error("Error saving appointment");
+      return;
+    }
+    toast.success("Appointment saved");
+    data[0].recurring.days = JSON.parse(data[0].recurring.days);
+    setAppointment({ ...data[0], user: appointment.user });
+    setOriginal({ ...data[0], user: appointment.user });
+  };
+
   useEffect(() => {
     if (window) {
       const showAlert = (e: any) => {
@@ -68,7 +93,6 @@ export default function Student({
       };
     }
   }, [appointment, original]);
-
   return (
     <>
       <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
@@ -96,6 +120,48 @@ export default function Student({
                     }
                     className="text-4xl font-bold font-display text-text-500 mb-4 p-2 rounded-sm w-fit bg-transparent border-2 border-text-200"
                   />
+                  {appointment.recurring && (
+                    <div className="w-full bg-zinc-200 border-2 border-l-4 border-zinc-400 p-4">
+                      <h2 className="font-bold">
+                        This appointment is part of a recurring event.
+                      </h2>
+                      <p>
+                        It starts on{" "}
+                        {dayjs(
+                          appointment.recurring.start_date,
+                          "YYYY-MM-DD"
+                        ).format("MMMM D, YYYY")}
+                        , on{" "}
+                        <span className="italic">
+                          {formatDays(
+                            appointment.recurring.days.map((day) => {
+                              return dayjs()
+                                .day(
+                                  [
+                                    "Sun",
+                                    "Mon",
+                                    "Tue",
+                                    "Wed",
+                                    "Thu",
+                                    "Fri",
+                                    "Sat",
+                                  ].indexOf(day)
+                                )
+                                .format("dddd");
+                            })
+                          )}
+                        </span>
+                        {appointment.recurring.frequency === "weekly"
+                          ? " every week "
+                          : " every other week "}
+                        at{" "}
+                        {dayjs(appointment.start_time, "HH:mm:ss").format(
+                          "h:mm A"
+                        )}
+                        .
+                      </p>
+                    </div>
+                  )}
                   <table className="w-full">
                     <tbody>
                       <tr className="items-center gap-8">
@@ -258,6 +324,14 @@ export default function Student({
                   >
                     Cancel
                   </button>
+                  {appointment.recurring != null && (
+                    <button
+                      onClick={saveAllFuture}
+                      className="rounded-sm hover:bg-white/10 text-text-100 px-2 py-1 transition-all"
+                    >
+                      Save for all future appointments
+                    </button>
+                  )}
                   <button
                     onClick={save}
                     className="rounded-sm bg-emerald-600 hover:bg-emerald-700 transition-all text-white px-2 py-1"
@@ -287,10 +361,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       *,
       user (
         *
+      ),
+      recurring (
+        *
       )`
     )
     .eq("id", id)
     .single();
+  if (data.recurring) {
+    data.recurring.days = JSON.parse(data.recurring.days);
+  }
   if (error) {
     console.error(error);
     return {

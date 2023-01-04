@@ -125,7 +125,7 @@ export default function NewAppointment() {
               onClick={async () => {
                 save(closeDrawer);
               }}
-              className="px-6 py-2 bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-red-800 hover:bg-emerald-700 transition-all"
+              className="px-6 py-2 bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md disabled:hover:bg-emerald-500 hover:bg-emerald-700 transition-all"
             >
               Save
             </button>

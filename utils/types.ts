@@ -18,6 +18,7 @@ export type RecurringAppointment = {
     start_date: string;
     frequency: "weekly" | "biweekly";
     days: string[];
+    id?: string;
 }
 
 export type NewRecurringAppointmentObj = Omit<RecurringAppointment, "user"> & {
