@@ -39,12 +39,6 @@ export default function Appointment({
             .set("date", dayjs().get("date"))
             .format("h:mm A ")}
         </span>
-        &mdash;
-        <span>
-          {dayjs(appointment.end_time, "HH:mm:SS")
-            .set("date", dayjs().get("date"))
-            .format(" h:mm A ")}
-        </span>
       </p>
       <h1 className="text-text-400 text-xl">
         {(appointment.user?.student_first ?? "John") +

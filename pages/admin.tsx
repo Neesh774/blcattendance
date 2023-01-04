@@ -31,7 +31,7 @@ export default function Dashboard({
           </h1>
         </div>
         <div className="flex flex-row gap-2 items-center">
-          <NewAppointment students={users} />
+          <NewAppointment />
           <NewStudent />
           <span className="font-display text-lg ml-4 font-medium text-amber-400">
             ADMIN

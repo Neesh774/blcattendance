@@ -91,14 +91,6 @@ export default function Schedule({
         filter: timeFilterFn,
       },
       {
-        Header: "End Time",
-        accessor: (row: any) => {
-          return dayjs(row.end_time, "HH:mm:ss").format("h:mm A");
-        },
-        Filter: TimeColumnFilter,
-        filter: timeFilterFn,
-      },
-      {
         Header: "Date",
         accessor: (row: any) => {
           return dayjs(row.date).format("MMM D, 'YY");

@@ -12,6 +12,18 @@ export type User = {
     notes: string;
 }
 
+export type RecurringAppointment = {
+    num_appointments: number;
+    user: User;
+    start_date: string;
+    frequency: "weekly" | "biweekly";
+    days: string[];
+}
+
+export type NewRecurringAppointmentObj = Omit<RecurringAppointment, "user"> & {
+    user: string;
+}
+
 export type Appointment = {
     id?: string;
     status: string;
@@ -19,12 +31,25 @@ export type Appointment = {
     description: string;
     instructor: string;
     start_time: string;
-    end_time: string;
     date: string;
     user: User;
+    recurring: RecurringAppointment;
 }
 
-export type AppointmentUserId = Omit<Appointment, "user"> & { user: string };
+export type NewRecurringAppointment = Omit<Appointment, "recurring" | "user"> & {
+    recurring: true;
+    num_appointments: number;
+    frequency: "weekly" | "biweekly";
+    days: string[];
+    user: string;
+}
+
+export type NewSingleAppointment = Omit<Appointment, "recurring" | "user"> & {
+    recurring: false;
+    user: string;
+}
+
+export type NewAppointment = NewRecurringAppointment | NewSingleAppointment;
 
 export type TableOptions = {
     hideFilters: boolean;

@@ -30,15 +30,6 @@ export default function Student({
   const [appointment, setAppointment] = useState(initAppointment);
   const [original, setOriginal] = useState(initAppointment);
   const save = async () => {
-    if (
-      !dayjs(appointment.start_time, "HH:mm:ss").isBefore(
-        dayjs(appointment.end_time, "HH:mm:ss"),
-        "minutes"
-      )
-    ) {
-      toast.error("Start time must be before end time");
-      return;
-    }
     const { data, error } = await supabase
       .from("appointments")
       .update({
@@ -46,7 +37,6 @@ export default function Student({
         start_time: dayjs(appointment.start_time, "HH:mm:ss").format(
           "HH:mm:ss"
         ),
-        end_time: dayjs(appointment.end_time, "HH:mm:ss").format("HH:mm:ss"),
         user: appointment.user.id,
       })
       .eq("id", appointment.id)
@@ -198,26 +188,6 @@ export default function Student({
                                   return {
                                     ...prev,
                                     start_time: e.target.value,
-                                  };
-                                });
-                              }}
-                              className="py-1 px-3 rounded-sm w-fit bg-zinc-200/50 outline-none border-2 focus:border-zinc-400"
-                            />
-                            <ArrowRight
-                              className="w-5 h-5 text-text-100"
-                              strokeWidth={3}
-                            />
-                            <input
-                              type="time"
-                              value={dayjs(
-                                appointment.end_time,
-                                "HH:mm"
-                              ).format("HH:mm")}
-                              onChange={(e) => {
-                                setAppointment((prev) => {
-                                  return {
-                                    ...prev,
-                                    end_time: e.target.value,
                                   };
                                 });
                               }}
