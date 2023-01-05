@@ -97,6 +97,13 @@ export default function Schedule({
         },
         Filter: DateColumnFilter,
         filter: dateFilterFn,
+        sortType: (rowA, rowB, columnId) => {
+          const a = rowA.values[columnId];
+          const b = rowB.values[columnId];
+          return dayjs(a, "MMM D, 'YY").isBefore(dayjs(b, "MMM D, 'YY"))
+            ? 1
+            : -1;
+        },
       },
     ],
     []
