@@ -1,4 +1,5 @@
 import {
+  DollarSign,
   EyeOff,
   GraduationCap,
   Mail,
@@ -25,6 +26,8 @@ export default function NewStudent() {
     parent_email: "",
     phone_number: "",
     notes: "",
+    billing_rate: 345,
+    num_appointments: 0,
   });
 
   const save = async (closeDrawer: () => void) => {
@@ -47,6 +50,8 @@ export default function NewStudent() {
       parent_email: "",
       phone_number: "",
       notes: "",
+      billing_rate: 345,
+      num_appointments: 0,
     });
     closeDrawer();
   };
@@ -82,6 +87,8 @@ export default function NewStudent() {
                 parent_email: "",
                 phone_number: "",
                 notes: "",
+                billing_rate: 345,
+                num_appointments: 0,
               });
             }}
           >
@@ -208,7 +215,25 @@ export default function NewStudent() {
           />
         </div>
         <hr className="border-zinc-300" />
-        <h3 className="text-xl font-display text-text-300">Notes</h3>
+        <h3 className="text-xl font-display text-text-300">Other Details</h3>
+        <div className="flex flex-row gap-1 items-center w-full">
+          <div className="relative w-1/3">
+            <DollarSign className="absolute left-1 h-full py-2" />
+            <input
+              placeholder="Hourly Billing Rate"
+              className="py-1 px-3 rounded-sm bg-zinc-200/50 w-full outline-none border-2 focus:border-zinc-400 pl-9"
+              value={newStudent.billing_rate}
+              type="number"
+              onChange={(e) =>
+                setNewStudent({
+                  ...newStudent,
+                  billing_rate: parseInt(e.target.value),
+                })
+              }
+            />
+          </div>
+          <span className="text-lg">/hr</span>
+        </div>
         <div className="flex flex-col gap-2 w-full">
           <textarea
             placeholder="Notes"

@@ -9,6 +9,7 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
+  DollarSign,
   Loader2,
   Pencil,
   X,
@@ -18,6 +19,8 @@ import UserAppointments from "../../components/UserAppointments";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { deepEquals } from "../../utils/deepEquals";
+import NewAppointment from "../../components/NewAppointment";
+import NewStudent from "../../components/NewStudent";
 
 export default function Student({
   initialUser,
@@ -75,14 +78,18 @@ export default function Student({
             BLC Attendance
           </h1>
         </div>
-        <span className="font-display text-lg ml-4 font-medium text-amber-400">
-          ADMIN
-        </span>
+        <div className="flex flex-row gap-2 items-center">
+          <NewAppointment />
+          <NewStudent />
+          <span className="font-display text-lg ml-4 font-medium text-amber-400">
+            ADMIN
+          </span>
+        </div>
       </nav>
       <div className="flex flex-row flex-grow w-full">
         <Sidebar section={undefined} />
         <div className="w-full">
-          <div className="px-4 mx-auto flex flex-col gap-4 mt-12 w-full lg:px-0 lg:w-4/5 xl:w-3/5 2xl:w-2/5">
+          <div className="px-4 mx-auto flex flex-col gap-4 mt-12 w-full lg:px-0 lg:w-[50rem]">
             {user && appointments ? (
               <>
                 <div className="flex flex-row gap-2 w-fit items-center">
@@ -142,74 +149,90 @@ export default function Student({
                   >
                     <table>
                       <tbody>
-                        {original.student_first && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              First Name
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
-                              {user.student_first}
-                            </td>
-                          </tr>
-                        )}
-                        {original.student_last && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              Last Name
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
-                              {user.student_last}
-                            </td>
-                          </tr>
-                        )}
-                        {original.classOf && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              Grade
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
-                              {dayjs().year() >= user.classOf
-                                ? "Graduated"
-                                : 13 - (user.classOf - dayjs().year())}
-                              <span className="text-text-200">
-                                {" "}
-                                &#40;Class of
-                                <input
-                                  type="number"
-                                  className="w-20 text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1 ml-1"
-                                  value={user.classOf}
-                                  onChange={(e) =>
-                                    setUser({
-                                      ...user,
-                                      classOf: parseInt(e.target.value),
-                                    })
-                                  }
-                                />
-                                &#41;
-                              </span>
-                            </td>
-                          </tr>
-                        )}
-                        {original.school && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              School
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            First Name
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            {user.student_first ?? ""}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            Last Name
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            {user.student_last ?? ""}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            Grade
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            {user.classOf && dayjs().year() >= user.classOf
+                              ? "Graduated"
+                              : 13 - (user.classOf - dayjs().year())}
+                            <span className="text-text-200">
+                              {" "}
+                              &#40;Class of
                               <input
-                                type="text"
-                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
-                                value={user.school}
+                                type="number"
+                                className="w-20 text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1 ml-1"
+                                value={user.classOf ?? dayjs().year()}
                                 onChange={(e) =>
                                   setUser({
                                     ...user,
-                                    school: e.target.value,
+                                    classOf: parseInt(e.target.value),
                                   })
                                 }
                               />
-                            </td>
-                          </tr>
-                        )}
+                              &#41;
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            School
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            <input
+                              type="text"
+                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
+                              value={user.school ?? ""}
+                              onChange={(e) =>
+                                setUser({
+                                  ...user,
+                                  school: e.target.value,
+                                })
+                              }
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            Billing Rate
+                          </td>
+                          <td className="py-3 flex flex-row items-center text-lg w-5/6 text-text-300">
+                            <DollarSign />
+                            <input
+                              type="number"
+                              className="text-lg w-20 text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
+                              value={user.billing_rate ?? ""}
+                              onChange={(e) =>
+                                setUser({
+                                  ...user,
+                                  billing_rate: parseInt(e.target.value),
+                                })
+                              }
+                            />
+                            <span className="text-xl">/hr</span>
+                            <span className="text-text-200 ml-1">
+                              &#40;{user.student_first} has had{" "}
+                              {appointments.length} appointments&#41;
+                            </span>
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                     <div className="flex flex-col gap-2">
@@ -217,7 +240,7 @@ export default function Student({
                         Notes
                       </span>
                       <textarea
-                        className="text-text-300 rounded-sm bg-zinc-200/50 hover:bg-zinc-200 transition-all duration-300 p-4 resize-none outline-none"
+                        className="text-text-300 rounded-md bg-zinc-200/50 hover:bg-zinc-200 transition-all duration-300 p-4 resize-none outline-none border-2 border-text-200"
                         value={user.notes}
                         onChange={(e) =>
                           setUser({

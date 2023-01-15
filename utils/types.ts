@@ -10,19 +10,17 @@ export type User = {
     classOf: number;
     school: string;
     notes: string;
+    billing_rate: number;
+    num_appointments: number;
 }
 
-export type RecurringAppointment = {
+export type RecurringAppointmentParent = {
     num_appointments: number;
     user: User;
     start_date: string;
     frequency: "weekly" | "biweekly";
     days: string[];
     id?: string;
-}
-
-export type NewRecurringAppointmentObj = Omit<RecurringAppointment, "user"> & {
-    user: string;
 }
 
 export type Appointment = {
@@ -34,7 +32,8 @@ export type Appointment = {
     start_time: string;
     date: string;
     user: User;
-    recurring: RecurringAppointment;
+    recurring: RecurringAppointmentParent;
+    cost_per_hour: number;
 }
 
 export type NewRecurringAppointment = Omit<Appointment, "recurring" | "user"> & {
@@ -42,15 +41,15 @@ export type NewRecurringAppointment = Omit<Appointment, "recurring" | "user"> & 
     num_appointments: number;
     frequency: "weekly" | "biweekly";
     days: string[];
-    user: string;
+    user: User | undefined;
 }
 
 export type NewSingleAppointment = Omit<Appointment, "recurring" | "user"> & {
     recurring: false;
-    user: string;
+    user: User | undefined;
 }
 
-export type NewAppointment = NewRecurringAppointment | NewSingleAppointment;
+export type NewAppointment = NewRecurringAppointment | NewSingleAppointment
 
 export type TableOptions = {
     hideFilters: boolean;

@@ -8,6 +8,7 @@ import {
   useGlobalFilter,
   useBlockLayout,
   useResizeColumns,
+  useFlexLayout,
 } from "react-table";
 import type { Column } from "react-table";
 import {
@@ -86,7 +87,8 @@ export default function Table({
     useFilters,
     useGlobalFilter,
     useSortBy,
-    usePagination
+    usePagination,
+    useFlexLayout
   );
 
   return (

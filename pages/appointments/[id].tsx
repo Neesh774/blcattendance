@@ -9,6 +9,7 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronRight,
+  DollarSign,
   Edit,
   Loader2,
   User,
@@ -22,6 +23,8 @@ import { deepEquals } from "../../utils/deepEquals";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { formatDays } from "../../utils/formatDays";
+import NewAppointment from "../../components/NewAppointment";
+import NewStudent from "../../components/NewStudent";
 
 export default function Student({
   initAppointment,
@@ -72,6 +75,34 @@ export default function Student({
       return;
     }
     toast.success("Appointment saved");
+
+    if (appointment.status === "cancelled" && original.status !== "cancelled") {
+      const { data, error } = await supabase
+        .from("users")
+        .update({ num_appointments: initAppointment.user.num_appointments - 1 })
+        .eq("id", appointment.user.id)
+        .select();
+      if (error) {
+        console.error(error);
+        toast.error("Error updating user");
+        return;
+      }
+    } else if (
+      appointment.status !== "cancelled" &&
+      original.status === "cancelled"
+    ) {
+      const { data, error } = await supabase
+        .from("users")
+        .update({ num_appointments: initAppointment.user.num_appointments + 1 })
+        .eq("id", appointment.user.id)
+        .select();
+      if (error) {
+        console.error(error);
+        toast.error("Error updating user");
+        return;
+      }
+    }
+
     data[0].recurring.days = JSON.parse(data[0].recurring.days);
     setAppointment({ ...data[0], user: appointment.user });
     setOriginal({ ...data[0], user: appointment.user });
@@ -103,9 +134,13 @@ export default function Student({
               BLC Attendance
             </h1>
           </div>
-          <span className="font-display text-lg ml-4 font-medium text-amber-400">
-            ADMIN
-          </span>
+          <div className="flex flex-row gap-2 items-center">
+            <NewAppointment />
+            <NewStudent />
+            <span className="font-display text-lg ml-4 font-medium text-amber-400">
+              ADMIN
+            </span>
+          </div>
         </nav>
         <div className="flex flex-row flex-grow w-full">
           <Sidebar section={undefined} />
@@ -184,7 +219,11 @@ export default function Student({
                               appointment.user.id as number
                             ).toString()}
                             setSelected={(student: UserType) =>
-                              setAppointment({ ...appointment, user: student })
+                              setAppointment({
+                                ...appointment,
+                                user: student,
+                                cost_per_hour: student.billing_rate,
+                              })
                             }
                             fullObj
                             target={<Edit className="w-5 h-5" />}
@@ -235,6 +274,28 @@ export default function Student({
                               <option value="cancelled">Cancelled</option>
                             </select>
                           </span>
+                        </td>
+                      </tr>
+                      <tr className="items-center gap-8">
+                        <td className="py-3 text-lg font-medium font-display text-text-500">
+                          Cost
+                        </td>
+                        <td>
+                          <div className="flex flex-row gap-1 items-center">
+                            <DollarSign />
+                            <input
+                              type="number"
+                              value={appointment.cost_per_hour}
+                              onChange={(e) =>
+                                setAppointment({
+                                  ...appointment,
+                                  cost_per_hour: parseInt(e.target.value),
+                                })
+                              }
+                              className="px-2 py-1 rounded-sm w-20 bg-transparent border-2 border-text-200"
+                            />
+                            <span className="text-xl">/hr</span>
+                          </div>
                         </td>
                       </tr>
                       <tr className="items-center gap-8">

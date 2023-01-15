@@ -1,4 +1,4 @@
-import { NewAppointment, NewRecurringAppointment, NewRecurringAppointmentObj, NewSingleAppointment } from "./types";
+import { NewAppointment, NewRecurringAppointment, NewSingleAppointment } from "./types";
 import dayjs from "dayjs";
 
 export function generateAppointments(recurring: NewRecurringAppointment) {
@@ -16,11 +16,12 @@ export function generateAppointments(recurring: NewRecurringAppointment) {
           recurring: false,
           date: date.format("YYYY-MM-DD"),
           start_time: recurring.start_time,
-          topic: recurring.topic + ` (${i + 1}/${recurring.num_appointments})`,
+          topic: recurring.topic,
           description: recurring.description,
           instructor: recurring.instructor,
           status: "scheduled",
           user: recurring.user,
+          cost_per_hour: recurring.cost_per_hour,
         });
         i++;
       }

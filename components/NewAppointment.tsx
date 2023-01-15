@@ -1,11 +1,17 @@
-import { ArrowRight, EyeOff, Plus, X } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  DollarSign,
+  EyeOff,
+  Plus,
+  X,
+} from "lucide-react";
 import Drawer from "./base/Drawer";
 import UserSelect from "./UserSelect";
 import {
   NewAppointment as NewAppointmentType,
   NewRecurringAppointment,
-  NewRecurringAppointmentObj,
-  RecurringAppointment,
+  RecurringAppointmentParent,
   User,
 } from "../utils/types";
 import { useState } from "react";
@@ -18,20 +24,28 @@ import { generateAppointments } from "../utils/generateAppointments";
 export default function NewAppointment() {
   const [newAppointment, setNewAppointment] = useState<NewAppointmentType>({
     topic: "",
-    user: "",
+    user: undefined,
     date: "",
     start_time: "",
     status: "scheduled",
     description: "",
     instructor: "",
     recurring: false,
+    cost_per_hour: 345,
   });
 
   const save = async (closeDrawer: () => void) => {
+    if (!newAppointment.user) {
+      toast.error("Please select a student");
+      return;
+    }
+    let numAppointments = 1;
     if (!newAppointment.recurring) {
       const { data, error } = await supabase.from("appointments").insert({
         ...newAppointment,
         start_time: newAppointment.start_time + ":00",
+        user: newAppointment.user?.id,
+        recurring: null,
       });
       if (error) {
         console.error(error);
@@ -39,16 +53,19 @@ export default function NewAppointment() {
         return;
       }
     } else {
-      const recurringAppointment: NewRecurringAppointmentObj = {
+      const recurringAppointment: RecurringAppointmentParent = {
         start_date: newAppointment.date,
         frequency: newAppointment.frequency,
         num_appointments: newAppointment.num_appointments,
-        user: newAppointment.user,
+        user: newAppointment.user as User,
         days: newAppointment.days,
       };
       const { data: recData, error: recError } = await supabase
         .from("recurring_appointments")
-        .insert(recurringAppointment)
+        .insert({
+          ...recurringAppointment,
+          user: recurringAppointment.user.id,
+        })
         .select()
         .single();
       if (recError) {
@@ -70,17 +87,31 @@ export default function NewAppointment() {
         toast.error("Error saving appointment");
         return;
       }
+      numAppointments = newAppointment.num_appointments;
+    }
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .update({
+        num_appointments:
+          newAppointment.user.num_appointments + numAppointments,
+      })
+      .eq("id", newAppointment.user?.id);
+    if (userError) {
+      console.error(userError);
+      toast.error("Error saving appointment");
+      return;
     }
     toast.success("Appointment saved");
     setNewAppointment({
       topic: "",
-      user: "",
+      user: undefined,
       date: "",
       start_time: "",
       status: "scheduled",
       description: "",
       instructor: "",
       recurring: false,
+      cost_per_hour: 345,
     });
     closeDrawer();
   };
@@ -109,13 +140,14 @@ export default function NewAppointment() {
                 closeDrawer();
                 setNewAppointment({
                   topic: "",
-                  user: "",
+                  user: undefined,
                   date: "",
                   start_time: "",
                   status: "scheduled",
                   description: "",
                   instructor: "",
                   recurring: false,
+                  cost_per_hour: 345,
                 });
               }}
             >
@@ -142,6 +174,7 @@ export default function NewAppointment() {
         )}
       >
         <div className="flex flex-col gap-4">
+          <h3 className="text-xl font-display text-text-300">Appointment</h3>
           <div className="flex flex-col gap-4">
             <input
               type="text"
@@ -158,15 +191,17 @@ export default function NewAppointment() {
               className="py-1 px-3 rounded-sm bg-zinc-200/50 w-60 outline-none border-2 focus:border-zinc-400"
             />
             <UserSelect
-              selected={newAppointment.user}
-              setSelected={(id: string) => {
+              selected={newAppointment.user?.id?.toString() ?? ""}
+              setSelected={(user: User) => {
                 setNewAppointment((prev) => {
                   return {
                     ...prev,
-                    user: id,
+                    user: user,
+                    cost_per_hour: user.billing_rate,
                   };
                 });
               }}
+              fullObj
             />
             <div className="flex flex-row gap-4 w-84 items-center">
               <input
@@ -201,6 +236,9 @@ export default function NewAppointment() {
               </select>
             </div>
             <hr className="border-zinc-300" />
+            <h3 className="text-xl font-display text-text-300">
+              Time and Date
+            </h3>
             <div className="flex flex-row justify-between w-full items-center">
               <label className="text-text-500 font-display text-lg font-bold">
                 Recurring
@@ -361,7 +399,40 @@ export default function NewAppointment() {
               </div>
             )}
             <hr className="border-zinc-300" />
+            <h3 className="text-xl font-display text-text-300">
+              Other Details
+            </h3>
             <div className="flex flex-col w-full gap-2">
+              <div className="flex flex-row items-center w-full gap-1">
+                <DollarSign />
+                <input
+                  type="number"
+                  value={newAppointment.cost_per_hour}
+                  onChange={(e) => {
+                    setNewAppointment((prev) => {
+                      return {
+                        ...prev,
+                        cost_per_hour: parseInt(e.target.value),
+                      };
+                    });
+                  }}
+                  min={1}
+                  className="py-1 px-3 rounded-sm bg-zinc-200/50 w-20 outline-none border-2 focus:border-zinc-400"
+                />
+                <span className="text-lg">/hr</span>
+              </div>
+              {newAppointment.user && (
+                <span className="flex flex-row gap-1 items-center">
+                  <CalendarDays className="w-5 h-5 text-text-100" />
+                  <span className="text-text-100 text-sm ml-1">
+                    {`${newAppointment.user.student_first} has had ${
+                      newAppointment.user.num_appointments
+                    } appointment${
+                      newAppointment.user.num_appointments != 1 ? "s" : ""
+                    }.`}
+                  </span>
+                </span>
+              )}
               <textarea
                 placeholder="Description"
                 value={newAppointment.description}

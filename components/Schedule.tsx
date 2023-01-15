@@ -63,6 +63,11 @@ export default function Schedule({
   const columns = useMemo<Column[]>(
     () => [
       {
+        Header: "Student",
+        accessor: (row: any) =>
+          row.user.student_first + " " + row.user.student_last,
+      },
+      {
         Header: "Topic",
         accessor: "topic",
         primary: true,
@@ -71,11 +76,7 @@ export default function Schedule({
         Header: "Status",
         accessor: "status",
         Filter: SelectColumnFilter,
-      },
-      {
-        Header: "Student",
-        accessor: (row: any) =>
-          row.user.student_first + " " + row.user.student_last,
+        width: 100,
       },
       {
         Header: "Instructor",
@@ -89,6 +90,7 @@ export default function Schedule({
         },
         Filter: TimeColumnFilter,
         filter: timeFilterFn,
+        width: 60,
       },
       {
         Header: "Date",
@@ -104,6 +106,14 @@ export default function Schedule({
             ? 1
             : -1;
         },
+        width: 60,
+      },
+      {
+        Header: "Hourly",
+        accessor: (row: any) => {
+          return `$${row.cost_per_hour}`;
+        },
+        width: 60,
       },
     ],
     []
