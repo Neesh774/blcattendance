@@ -26,7 +26,7 @@ export default function NewStudent() {
     parent_email: "",
     phone_number: "",
     notes: "",
-    billing_rate: 345,
+    billing_rate: 43,
     num_appointments: 0,
   });
 
@@ -50,7 +50,7 @@ export default function NewStudent() {
       parent_email: "",
       phone_number: "",
       notes: "",
-      billing_rate: 345,
+      billing_rate: 43,
       num_appointments: 0,
     });
     closeDrawer();
@@ -87,7 +87,7 @@ export default function NewStudent() {
                 parent_email: "",
                 phone_number: "",
                 notes: "",
-                billing_rate: 345,
+                billing_rate: 43,
                 num_appointments: 0,
               });
             }}

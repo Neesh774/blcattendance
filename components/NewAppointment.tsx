@@ -31,7 +31,7 @@ export default function NewAppointment() {
     description: "",
     instructor: "",
     recurring: false,
-    cost_per_hour: 345,
+    cost_per_hour: 43,
   });
 
   const save = async (closeDrawer: () => void) => {
@@ -111,7 +111,7 @@ export default function NewAppointment() {
       description: "",
       instructor: "",
       recurring: false,
-      cost_per_hour: 345,
+      cost_per_hour: 43,
     });
     closeDrawer();
   };
@@ -147,7 +147,7 @@ export default function NewAppointment() {
                   description: "",
                   instructor: "",
                   recurring: false,
-                  cost_per_hour: 345,
+                  cost_per_hour: 43,
                 });
               }}
             >
