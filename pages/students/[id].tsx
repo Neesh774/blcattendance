@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import { deepEquals } from "../../utils/deepEquals";
 import NewAppointment from "../../components/NewAppointment";
 import NewStudent from "../../components/NewStudent";
+import getStudentGrade from "../../utils/getStudentGrade";
 
 export default function Student({
   initialUser,
@@ -170,9 +171,7 @@ export default function Student({
                             Grade
                           </td>
                           <td className="py-3 text-lg w-5/6 text-text-300">
-                            {user.classOf && dayjs().year() >= user.classOf
-                              ? "Graduated"
-                              : 13 - (user.classOf - dayjs().year())}
+                            {getStudentGrade(user.classOf)}
                             <span className="text-text-200">
                               {" "}
                               &#40;Class of
@@ -229,7 +228,8 @@ export default function Student({
                             <span className="text-xl">/hr</span>
                             <span className="text-text-200 ml-1">
                               &#40;{user.student_first} has had{" "}
-                              {appointments.length} appointments&#41;
+                              {appointments.length} appointment
+                              {appointments.length != 1 ? "s" : ""}&#41;
                             </span>
                           </td>
                         </tr>

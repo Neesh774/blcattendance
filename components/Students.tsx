@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import Table from "./base/Table";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
+import getStudentGrade from "../utils/getStudentGrade";
 
 export default function Students({
   students,
@@ -22,10 +23,7 @@ export default function Students({
       },
       {
         Header: "Grade",
-        accessor: (row: any) =>
-          dayjs().year() >= row.classOf
-            ? "Graduated"
-            : 13 - (row.classOf - dayjs().year()),
+        accessor: (row: any) => getStudentGrade(row.classOf),
         Filter: SelectColumnFilter,
       },
       {
