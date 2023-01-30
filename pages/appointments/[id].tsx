@@ -38,9 +38,7 @@ export default function Student({
       .from("appointments")
       .update({
         ...appointment,
-        start_time: dayjs(appointment.start_time, "HH:mm:ss").format(
-          "HH:mm:ss"
-        ),
+        start_time: dayjs(appointment.start_time, "HH:mm").format("HH:mm:ss"),
         user: appointment.user.id,
       })
       .eq("id", appointment.id)

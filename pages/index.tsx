@@ -14,8 +14,8 @@ export default function SignIn() {
       const startTime = dayjs(a.start_time, "HH:mm:SS");
       const date = dayjs(a.date, "YYYY-MM-DD");
       return (
-        startTime.isAfter(dayjs().subtract(30, "minute"), "minute") &&
-        startTime.isBefore(dayjs().add(30, "minute"), "minute") &&
+        startTime.isAfter(dayjs().set("hour", 10).set("minute", 0), "hour") &&
+        startTime.isBefore(dayjs().set("hour", 20), "hour") &&
         date.isSame(dayjs(), "date") &&
         a.status == "scheduled"
       );
