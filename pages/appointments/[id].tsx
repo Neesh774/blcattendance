@@ -497,15 +497,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     )
     .eq("id", id)
     .single();
-  if (data.recurring) {
-    data.recurring.days = JSON.parse(data.recurring.days);
-  }
   if (error) {
     console.error(error);
     return {
       notFound: true,
     };
   }
+  if (data.recurring) {
+    data.recurring.days = JSON.parse(data.recurring.days);
+  }
+
   return {
     props: {
       initAppointment: data,
