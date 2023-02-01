@@ -9,9 +9,11 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronRight,
+  Delete,
   DollarSign,
   Edit,
   Loader2,
+  Trash,
   User,
 } from "lucide-react";
 import Table from "../../components/base/Table";
@@ -25,6 +27,7 @@ import toast from "react-hot-toast";
 import { formatDays } from "../../utils/formatDays";
 import NewAppointment from "../../components/NewAppointment";
 import NewStudent from "../../components/NewStudent";
+import Modal from "../../components/base/Modal";
 
 export default function Student({
   initAppointment,
@@ -33,6 +36,8 @@ export default function Student({
 }) {
   const [appointment, setAppointment] = useState(initAppointment);
   const [original, setOriginal] = useState(initAppointment);
+  const router = useRouter();
+
   const save = async () => {
     const { data, error } = await supabase
       .from("appointments")
@@ -122,6 +127,21 @@ export default function Student({
       };
     }
   }, [appointment, original]);
+
+  const deleteAppointment = async () => {
+    const { data, error } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("id", appointment.id);
+    if (error) {
+      console.error(error);
+      toast.error("Error deleting appointment");
+      return;
+    }
+    toast.success("Appointment deleted");
+    router.push("/admin?s=schedule");
+  };
+
   return (
     <>
       <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
@@ -146,13 +166,63 @@ export default function Student({
             <div className="px-4 mx-auto flex flex-col gap-2 mt-12 w-full lg:px-0 lg:w-3/5 2xl:w-2/5">
               {appointment ? (
                 <>
-                  <input
-                    value={appointment.topic}
-                    onChange={(e) =>
-                      setAppointment({ ...appointment, topic: e.target.value })
-                    }
-                    className="text-4xl font-bold font-display text-text-500 mb-4 p-2 rounded-sm w-fit bg-transparent border-2 border-text-200"
-                  />
+                  <div className="flex flex-row justify-between">
+                    <input
+                      value={appointment.topic}
+                      onChange={(e) =>
+                        setAppointment({
+                          ...appointment,
+                          topic: e.target.value,
+                        })
+                      }
+                      className="text-4xl font-bold font-display text-text-500 mb-4 p-2 rounded-sm w-fit bg-transparent border-2 border-text-200"
+                    />
+                    <Modal
+                      target={(openModal) => (
+                        <button
+                          onClick={openModal}
+                          className="w-10 h-10 border-2 border-zinc-400 hover:border-red-500 transition-all text-zinc-400 hover:text-red-500 rounded-sm hover:bg-red-500/20 flex justify-center items-center"
+                        >
+                          <Trash />
+                        </button>
+                      )}
+                      header={
+                        <h1 className="text-2xl text-text-500 font-display font-bold">
+                          Delete Appointment
+                        </h1>
+                      }
+                      className="xl:!w-1/3 lg:!w-3/5"
+                      footer={(closeModal) => (
+                        <div className="flex flex-row gap-4 w-full justify-end">
+                          <button
+                            className="px-6 py-2 rounded-md hover:bg-zinc-300 transition-all"
+                            onClick={closeModal}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => {
+                              deleteAppointment().then(() => closeModal());
+                            }}
+                            className="bg-red-900 hover:bg-red-800 transition-all text-white px-6 py-2 rounded-md"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    >
+                      {() => (
+                        <div className="flex flex-col h-32 justify-between">
+                          <p>
+                            Are you sure you want to delete this appointment? It
+                            will NOT be recoverable. &#40;There&apos;s also a
+                            &quot;Cancelled&quot; status if you just want to
+                            hide it from the calendar.&#41;
+                          </p>
+                        </div>
+                      )}
+                    </Modal>
+                  </div>
                   {appointment.recurring && (
                     <div className="w-full bg-zinc-200 border-2 border-l-4 border-zinc-400 p-4">
                       <h2 className="font-bold">
