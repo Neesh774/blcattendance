@@ -12,6 +12,7 @@ import {
   NewAppointment as NewAppointmentType,
   NewRecurringAppointment,
   RecurringAppointmentParent,
+  Status,
   User,
 } from "../utils/types";
 import { useState } from "react";
@@ -224,7 +225,7 @@ export default function NewAppointment() {
                   setNewAppointment((prev) => {
                     return {
                       ...prev,
-                      status: e.target.value,
+                      status: e.target.value as Status,
                     };
                   });
                 }}

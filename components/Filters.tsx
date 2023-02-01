@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Row, useAsyncDebounce } from "react-table";
+import capitalize from "../utils/capitalize";
 
 export function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter, Header },
@@ -69,7 +70,7 @@ export function SelectColumnFilter({
       <option value="">All</option>
       {options.map((option, i) => (
         <option key={i} value={option}>
-          {option}
+          {capitalize(option)}
         </option>
       ))}
     </select>

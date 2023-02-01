@@ -19,7 +19,7 @@ export default function Appointment({
       toast(
         `Hi ${appointment.user.student_first}! ${
           appointment.instructor &&
-          `You'll be with ${appointment.instructor} today.`
+          `You'll be working on ${appointment.topic} with ${appointment.instructor} today.`
         }`,
         {
           icon: "👋",
@@ -45,7 +45,6 @@ export default function Appointment({
           " " +
           (appointment.user?.student_last ?? "Smith")}
       </h1>
-      <h2 className="text-text-300 text-lg">{appointment.topic}</h2>
       <button
         onClick={signIn}
         className="bg-red-700 rounded-md text-white font-semibold text-center py-2 mt-4"

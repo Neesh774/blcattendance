@@ -23,9 +23,11 @@ export type RecurringAppointmentParent = {
     id?: string;
 }
 
+export type Status = "scheduled" | "cancelled" | "attended";
+
 export type Appointment = {
     id?: string;
-    status: string;
+    status: Status;
     topic: string;
     description: string;
     instructor: string;

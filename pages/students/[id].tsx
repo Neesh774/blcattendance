@@ -228,7 +228,12 @@ export default function Student({
                             <span className="text-xl">/hr</span>
                             <span className="text-text-200 ml-1">
                               &#40;{user.student_first} has had{" "}
-                              {appointments.length} appointment
+                              {
+                                appointments.filter(
+                                  (a) => a.status == "attended"
+                                ).length
+                              }{" "}
+                              appointment
                               {appointments.length != 1 ? "s" : ""}&#41;
                             </span>
                           </td>

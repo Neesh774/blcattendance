@@ -39,10 +39,12 @@ export default function Table({
   columns,
   data,
   options,
+  defaultFilters,
 }: {
   columns: Column<object>[];
   data: any;
   options?: TableOptions;
+  defaultFilters?: { id: string; value: string }[];
 }) {
   const filterTypes = useMemo(
     () => ({
@@ -80,7 +82,11 @@ export default function Table({
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: {
+        pageIndex: 0,
+        pageSize: 10,
+        filters: defaultFilters ?? [],
+      },
       defaultColumn,
       filterTypes,
     },
@@ -116,7 +122,9 @@ export default function Table({
                   >
                     <div className="flex flex-col my-2 gap-2">
                       <div className="flex flex-row w-full justify-between items-center">
-                        <span>{column.render("Header")}</span>
+                        <span className="truncate">
+                          {column.render("Header")}
+                        </span>
                         <span
                           className="w-8 h-8 flex justify-center items-center cursor-pointer hover:bg-zinc-300/50 transition-all duration-200 rounded-lg"
                           onClick={() => {

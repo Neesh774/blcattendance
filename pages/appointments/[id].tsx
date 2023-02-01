@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import supabase from "../../utils/client";
-import { Appointment, User as UserType } from "../../utils/types";
+import { Appointment, Status, User as UserType } from "../../utils/types";
 import Image from "next/image";
 import Sidebar from "../../components/Sidebar";
 import { useRouter } from "next/router";
@@ -262,7 +262,7 @@ export default function Student({
                               onChange={(e) =>
                                 setAppointment({
                                   ...appointment,
-                                  status: e.target.value,
+                                  status: e.target.value as Status,
                                 })
                               }
                               className="bg-transparent outline-none"
