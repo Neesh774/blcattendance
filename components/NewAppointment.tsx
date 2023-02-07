@@ -78,7 +78,10 @@ export default function NewAppointment() {
       const { data, error } = await supabase.from("appointments").insert([
         ...recurringAppointments.map((appointment) => {
           return {
-            ...appointment,
+            ...{
+              ...appointment,
+              user: newAppointment.user?.id,
+            },
             recurring: recData.id,
           };
         }),
