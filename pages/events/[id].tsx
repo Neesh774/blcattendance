@@ -156,15 +156,28 @@ export default function Event({
   }, [event, original]);
 
   const deleteEvent = async () => {
+    const { data: data2, error: error2 } = await supabase
+      .from("event_student")
+      .delete()
+      .eq("event", event.id);
+
+    if (error2) {
+      console.error(error2);
+      toast.error("Error deleting event");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("events")
-      .delete({})
+      .delete()
       .eq("id", event.id);
+
     if (error) {
       console.error(error);
       toast.error("Error deleting event");
       return;
     }
+
     toast.success("Event deleted");
     router.push("/admin?s=events");
   };
