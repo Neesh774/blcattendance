@@ -12,6 +12,9 @@ import supabase from "../utils/client";
 import NewStudent from "../components/NewStudent";
 import useStudents from "../utils/useStudents";
 import useAppointments from "../utils/useAppointments";
+import AdminNav from "../components/AdminNav";
+import Events from "../components/Events";
+import useEvents from "../utils/useEvents";
 
 export default function Dashboard({
   section,
@@ -20,31 +23,20 @@ export default function Dashboard({
 }) {
   const users = useStudents();
   const appointments = useAppointments();
+  const events = useEvents();
 
   return (
     <div className="bg-zinc-100 flex flex-col h-screen">
-      <nav className="flex flex-row justify-between items-center px-4 py-1 h-14 bg-red-900 border-b-2 border-zinc-300">
-        <div className="flex flex-row items-center">
-          <Image alt="Logo" width={40} height={40} src="/favicon.png" />
-          <h1 className="text-2xl font-medium font-serif text-white ml-2">
-            BLC Attendance
-          </h1>
-        </div>
-        <div className="flex flex-row gap-2 items-center">
-          <NewAppointment />
-          <NewStudent />
-          <span className="font-display text-lg ml-4 font-medium text-amber-400">
-            ADMIN
-          </span>
-        </div>
-      </nav>
+      <AdminNav />
       <div className="flex flex-row flex-grow w-full h-[calc(100vh-3.5rem)]">
         <Sidebar section={section} />
         <div className="flex flex-col w-full overflow-y-auto overflow-x-hidden">
           {section === "schedule" ? (
             <Schedule appointments={appointments} />
-          ) : (
+          ) : section === "users" ? (
             <Students students={users} />
+          ) : (
+            <Events events={events} />
           )}
         </div>
       </div>

@@ -1,5 +1,5 @@
 export type User = {
-    id?: number;
+    id: number;
     created_at?: string;
     student_first: string;
     student_last: string;
@@ -13,6 +13,8 @@ export type User = {
     billing_rate: number;
     num_appointments: number;
 }
+
+export type NewUser = Omit<User, "id" | "created_at" | "num_appointments">;
 
 export type RecurringAppointmentParent = {
     num_appointments: number;
@@ -54,10 +56,45 @@ export type NewSingleAppointment = Omit<Appointment, "recurring" | "user"> & {
 export type NewAppointment = NewRecurringAppointment | NewSingleAppointment
 
 export type TableOptions = {
-    hideFilters: boolean;
+    hideFilters?: boolean;
     selection?: false
+    link: (header: string, row: any) => string | null;
 } | {
     hideFilters: boolean;
     selection: true
     setSelection: (selection: any) => void;
 }
+
+export type Event = {
+    id?: string;
+    topic: string;
+    description: string;
+    instructor: string;
+    date: string;
+    time: string;
+    users: User[];
+    event_student: EventStudent[];
+}
+
+export type EventStudent = {
+    id?: string;
+    event: Event;
+    student: string;
+    users: User;
+    status: Status;
+}
+
+export type EventStudentUpdate = {
+    id: string;
+    status: Status;
+    event: string;
+    student: string;
+}
+
+export type NewEvent = Omit<Event, "id" | "users" | "event_student"> & {
+    students: User[];
+}
+
+export type NewEventStudent = Omit<EventStudent, "id" | "event" | "users"> & {
+    event: string;
+};

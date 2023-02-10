@@ -13,13 +13,21 @@ export default function UserSelect({
   setSelected,
   target,
   fullObj,
+  className,
+  blacklisted,
+  initial,
 }: {
   selected: string;
   setSelected: ((id: string) => void) | ((id: UserType) => void);
   target?: ReactElement;
   fullObj?: boolean;
+  className?: string;
+  blacklisted?: string[];
+  initial?: UserType;
 }) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(
+    initial ? initial?.student_first + " " + initial?.student_last : ""
+  );
   const students = useStudents();
   const columns = useMemo<Column[]>(
     () => [
@@ -58,12 +66,17 @@ export default function UserSelect({
     }
   }, [selected]);
 
+  useEffect(() => {
+    if (initial) {
+      setName(initial.student_first + " " + initial.student_last);
+    }
+  }, [initial]);
   return (
     <Modal
       target={(openModal: () => void) => (
         <button
           onClick={openModal}
-          className="flex flex-row w-fit gap-2 text-text-300 border-2 border-zinc-300 font-display rounded-sm items-center hover:bg-zinc-200/30 px-2 py-1 transition-all duration-150"
+          className={`flex flex-row w-fit gap-2 text-text-300 border-2 border-zinc-300 font-display rounded-sm items-center hover:bg-zinc-200/30 px-2 py-1 transition-all duration-150 ${className}`}
         >
           {target ? (
             <>{target}</>
@@ -80,9 +93,11 @@ export default function UserSelect({
         </button>
       )}
       header={
-        <h1 className="text-2xl text-text-500 font-display font-bold">
-          {selected ? "Change Student" : "Select Student"}
-        </h1>
+        <div className="flex flex-row w-full justify-between">
+          <h1 className="text-2xl text-text-500 font-display font-bold">
+            {selected ? "Change Student" : "Select Student"}
+          </h1>
+        </div>
       }
     >
       {(closeModal) => (
@@ -90,12 +105,17 @@ export default function UserSelect({
           {students ? (
             <Table
               columns={columns}
-              data={studentData}
+              data={studentData.filter((s) => {
+                if (s.id.toString() === selected) return false;
+                if (blacklisted?.includes(s.id.toString())) return false;
+                return true;
+              })}
               options={{
                 hideFilters: true,
                 selection: true,
                 setSelection: (student) => {
                   setSelected(fullObj ? student : student.id);
+                  console.log(student);
                   setName(student.student_first + " " + student.student_last);
                   closeModal();
                 },

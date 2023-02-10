@@ -182,17 +182,14 @@ export default function Table({
                         key={c}
                         onClick={() => {
                           if (!options?.selection) {
-                            if (cell.column.Header == "Student") {
-                              router.push(
-                                `/students/${(row.original as any).user.id}`
+                            if (options?.link) {
+                              const link = options.link(
+                                cell.column.Header?.toString() || "",
+                                row
                               );
-                            } else if (cell.column.Header == "Topic") {
-                              router.push(
-                                `/appointments/${(row.original as any).id}`
-                              );
-                            } else if (cell.column.Header == "Name") {
-                              router.push(`
-                              /students/${(row.original as any).id}`);
+                              if (link) {
+                                router.push(link);
+                              }
                             }
                           } else {
                             options.setSelection(row.original as any);

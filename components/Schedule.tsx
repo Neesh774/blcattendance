@@ -12,48 +12,7 @@ import {
   TimeColumnFilter,
 } from "./Filters";
 import { toast } from "react-hot-toast";
-
-function dateFilterFn(rows: Row[], id: any, filterValue: string) {
-  const type = filterValue[0];
-  const date = filterValue.slice(1);
-  if (type === "=") {
-    return rows.filter((row) => {
-      const rowDate = row.values[id];
-      return dayjs(rowDate, "MMM D, 'YY").isSame(dayjs(date, "YYYY-MM-DD"));
-    });
-  } else if (type === "<") {
-    return rows.filter((row) => {
-      const rowDate = row.values[id];
-      return dayjs(rowDate, "MMM D, 'YY").isBefore(dayjs(date, "YYYY-MM-DD"));
-    });
-  }
-  return rows.filter((row) => {
-    const rowDate = row.values[id];
-    return dayjs(rowDate, "MMM D, 'YY").isAfter(dayjs(date, "YYYY-MM-DD"));
-  });
-}
-
-function timeFilterFn(rows: Row[], id: any, filterValue: string) {
-  const type = filterValue[0];
-  const time = filterValue.slice(1);
-  if (type === "=") {
-    return rows.filter((row) => {
-      const rowTime = row.values[id];
-      return dayjs(rowTime, "h:mm A").isSame(dayjs(time, "HH:mm"));
-    });
-  } else if (type === "<") {
-    return rows.filter((row) => {
-      const rowTime = row.values[id];
-      return dayjs(rowTime, "h:mm A").isBefore(dayjs(time, "HH:mm"));
-    });
-  }
-  return rows.filter((row) => {
-    const rowTime = row.values[id];
-    return dayjs(rowTime, "h:mm A").isAfter(dayjs(time, "HH:mm"));
-  });
-}
-
-dateFilterFn.autoRemove = (val: string) => !val;
+import { dateFilterFn, timeFilterFn } from "../utils/filters";
 
 export default function Schedule({
   appointments,
@@ -129,6 +88,16 @@ export default function Schedule({
           columns={columns}
           data={appointmentsData}
           defaultFilters={[{ id: "status", value: "scheduled" }]}
+          options={{
+            link: (header, row) => {
+              if (header === "Topic") {
+                return `/appointments/${row.original.id}`;
+              } else if (header === "Student") {
+                return `/students/${row.original.user.id}`;
+              }
+              return "";
+            },
+          }}
         />
       ) : (
         <div className="flex w-full h-[30%] justify-center items-center">

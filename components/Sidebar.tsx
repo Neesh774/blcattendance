@@ -1,11 +1,11 @@
-import { Calendar, Users } from "lucide-react";
+import { Calendar, CalendarRange, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Sidebar({
   section,
 }: {
-  section: "schedule" | "users" | undefined;
+  section: "schedule" | "users" | "events" | undefined;
 }) {
   return (
     <div className="flex flex-col w-fit bg-zinc-200/50 pl-2 py-2 gap-2">
@@ -24,6 +24,14 @@ export default function Sidebar({
         }`}
       >
         <Users className="text-emerald-600" />
+      </Link>
+      <Link
+        href="/admin?s=events"
+        className={`flex flex-row gap-2 items-center px-2 py-2 transition-all duration-200 rounded-md rounded-r-none ${
+          section === "events" ? "bg-violet-400/40" : "hover:bg-violet-400/20"
+        }`}
+      >
+        <CalendarRange className="text-violet-700" />
       </Link>
     </div>
   );

@@ -10,13 +10,13 @@ import {
 } from "lucide-react";
 import Drawer from "./base/Drawer";
 import { useState } from "react";
-import { User } from "../utils/types";
+import { NewUser, User } from "../utils/types";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import supabase from "../utils/client";
 
 export default function NewStudent() {
-  const [newStudent, setNewStudent] = useState<User>({
+  const [newStudent, setNewStudent] = useState<NewUser>({
     student_first: "",
     student_last: "",
     classOf: dayjs().year(),
@@ -27,7 +27,6 @@ export default function NewStudent() {
     phone_number: "",
     notes: "",
     billing_rate: 43,
-    num_appointments: 0,
   });
 
   const save = async (closeDrawer: () => void) => {
@@ -51,7 +50,6 @@ export default function NewStudent() {
       phone_number: "",
       notes: "",
       billing_rate: 43,
-      num_appointments: 0,
     });
     closeDrawer();
   };
@@ -88,7 +86,6 @@ export default function NewStudent() {
                 phone_number: "",
                 notes: "",
                 billing_rate: 43,
-                num_appointments: 0,
               });
             }}
           >

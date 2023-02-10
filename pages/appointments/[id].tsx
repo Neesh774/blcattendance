@@ -28,6 +28,7 @@ import { formatDays } from "../../utils/formatDays";
 import NewAppointment from "../../components/NewAppointment";
 import NewStudent from "../../components/NewStudent";
 import Modal from "../../components/base/Modal";
+import AdminNav from "../../components/AdminNav";
 
 export default function Student({
   initAppointment,
@@ -145,21 +146,7 @@ export default function Student({
   return (
     <>
       <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
-        <nav className="flex flex-row justify-between items-center px-4 py-1 bg-red-900 border-b-2 border-zinc-300">
-          <div className="flex flex-row items-center">
-            <Image alt="Logo" width={40} height={40} src="/favicon.png" />
-            <h1 className="text-2xl font-medium font-serif text-white ml-2">
-              BLC Attendance
-            </h1>
-          </div>
-          <div className="flex flex-row gap-2 items-center">
-            <NewAppointment />
-            <NewStudent />
-            <span className="font-display text-lg ml-4 font-medium text-amber-400">
-              ADMIN
-            </span>
-          </div>
-        </nav>
+        <AdminNav />
         <div className="flex flex-row flex-grow w-full">
           <Sidebar section={undefined} />
           <div className="w-full">

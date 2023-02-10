@@ -1,13 +1,16 @@
-import { Appointment as AppointmentType } from "../utils/types";
+import { Appointment as AppointmentType, Event } from "../utils/types";
 import dayjs from "dayjs";
 import Appointment from "../components/Appointment";
 import { Apple, Loader2 } from "lucide-react";
 import Image from "next/image";
 import useAppointments from "../utils/useAppointments";
 import { useEffect, useState } from "react";
+import useEvents from "../utils/useEvents";
+import EventAppointment from "../components/EventAppointment";
 
 export default function SignIn() {
   const allAppointments = useAppointments();
+  const allEvents = useEvents();
 
   const filterAppointments = (appointments: AppointmentType[]) => {
     return appointments.filter((a) => {
@@ -22,13 +25,33 @@ export default function SignIn() {
     });
   };
 
+  const filterEvents = (events: Event[]) => {
+    console.log(events);
+    const filtered = events.map((e) => {
+      return {
+        ...e,
+        event_student: e.event_student.filter((es) => {
+          return es.status == "scheduled";
+        }),
+      };
+    });
+    return filtered.filter((e) => {
+      const date = dayjs(e.date, "YYYY-MM-DD");
+      return date.isSame(dayjs(), "date");
+    });
+  };
+
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     if (allAppointments) {
       setAppointments(filterAppointments(allAppointments));
     }
-  }, [allAppointments]);
+    if (allEvents) {
+      setEvents(filterEvents(allEvents));
+    }
+  }, [allAppointments, allEvents]);
 
   return (
     <div className="h-screen bg-zinc-100 flex flex-col">
@@ -50,6 +73,26 @@ export default function SignIn() {
             appointment.
           </h3>
         </div>
+        {events
+          .filter((e) => e.event_student.length > 0)
+          .map((e, i) => (
+            <div
+              key={i}
+              className="bg-zinc-200/50 flex flex-col gap-4 border-y-[1px] border-zinc-300 p-4"
+            >
+              <div className="flex flex-row items-baseline gap-2">
+                <h1 className="text-3xl font-semibold">{e.topic}</h1>
+                <span className="text-lg font-semibold text-text-200">
+                  {dayjs(e.time, "HH:mm:ss").format("h:mm A")}
+                </span>
+              </div>
+              <div className="flex flex-row flex-wrap gap-4">
+                {e.event_student?.map((student, i) => (
+                  <EventAppointment student={student} key={i} />
+                ))}
+              </div>
+            </div>
+          ))}
         <div className="flex flex-row flex-wrap gap-4 bg-zinc-200/50 border-y-[1px] border-zinc-300 p-4">
           {appointments ? (
             <>

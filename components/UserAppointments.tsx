@@ -98,7 +98,13 @@ export default function UserAppointments({
   return (
     <div className="flex flex-col w-full p-4 gap-4 flex-grow">
       {appointments ? (
-        <Table columns={columns} data={appointmentsData} />
+        <Table
+          columns={columns}
+          data={appointmentsData}
+          options={{
+            link: (header, row) => `/appointments/${row.original.id}`,
+          }}
+        />
       ) : (
         <div className="flex w-full h-[30%] justify-center items-center">
           <Loader2 className="mx-auto w-8 h-8 text-red-700 animate-spin" />

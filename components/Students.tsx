@@ -51,7 +51,11 @@ export default function Students({
     <div className="flex flex-col w-full p-4 gap-4 flex-grow">
       <h1 className="font-display text-3xl font-bold">Students</h1>
       {students ? (
-        <Table columns={columns} data={studentData} />
+        <Table
+          columns={columns}
+          data={studentData}
+          options={{ link: (header, row) => `/students/${row.original.id}` }}
+        />
       ) : (
         <div className="flex w-full h-[30%] justify-center items-center">
           <Loader2 className="mx-auto w-8 h-8 text-red-700 animate-spin" />

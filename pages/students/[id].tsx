@@ -22,6 +22,7 @@ import { deepEquals } from "../../utils/deepEquals";
 import NewAppointment from "../../components/NewAppointment";
 import NewStudent from "../../components/NewStudent";
 import getStudentGrade from "../../utils/getStudentGrade";
+import AdminNav from "../../components/AdminNav";
 
 export default function Student({
   initialUser,
@@ -72,21 +73,7 @@ export default function Student({
 
   return (
     <div className="h-full min-h-screen bg-zinc-100 flex flex-col">
-      <nav className="flex flex-row justify-between items-center px-4 py-1 bg-red-900 border-b-2 border-zinc-300">
-        <div className="flex flex-row items-center">
-          <Image alt="Logo" width={40} height={40} src="/favicon.png" />
-          <h1 className="text-2xl font-medium font-serif text-white ml-2">
-            BLC Attendance
-          </h1>
-        </div>
-        <div className="flex flex-row gap-2 items-center">
-          <NewAppointment />
-          <NewStudent />
-          <span className="font-display text-lg ml-4 font-medium text-amber-400">
-            ADMIN
-          </span>
-        </div>
-      </nav>
+      <AdminNav />
       <div className="flex flex-row flex-grow w-full">
         <Sidebar section={undefined} />
         <div className="w-full">
@@ -194,10 +181,10 @@ export default function Student({
                           <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
                             School
                           </td>
-                          <td className="py-3 text-lg w-5/6 text-text-300">
+                          <td className="py-3 text-lg text-text-300">
                             <input
                               type="text"
-                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
+                              className="text-lg text-text-300 w-2/3 bg-transparent border-2 border-text-200/20 transition-all hover:border-text-200/50 focus:border-blue-500 rounded-sm px-1"
                               value={user.school ?? ""}
                               onChange={(e) =>
                                 setUser({
