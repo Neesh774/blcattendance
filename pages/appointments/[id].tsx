@@ -40,13 +40,17 @@ export default function Student({
   const router = useRouter();
 
   const save = async () => {
+    const updated: any = {
+      ...appointment,
+      start_time: dayjs(appointment.start_time, "HH:mm").format("HH:mm:ss"),
+      user: appointment.user.id,
+    };
+    if (appointment.recurring) {
+      updated.recurring = appointment.recurring.id;
+    }
     const { data, error } = await supabase
       .from("appointments")
-      .update({
-        ...appointment,
-        start_time: dayjs(appointment.start_time, "HH:mm").format("HH:mm:ss"),
-        user: appointment.user.id,
-      })
+      .update(updated)
       .eq("id", appointment.id)
       .select()
       .single();
@@ -56,8 +60,21 @@ export default function Student({
       return;
     }
     toast.success("Appointment saved");
-    setAppointment({ ...data, user: appointment.user });
-    setOriginal({ ...data, user: appointment.user });
+    if (appointment.recurring) {
+      setAppointment({
+        ...data,
+        user: appointment.user,
+        recurring: appointment.recurring,
+      });
+      setOriginal({
+        ...data,
+        user: appointment.user,
+        recurring: appointment.recurring,
+      });
+    } else {
+      setAppointment({ ...data, user: appointment.user });
+      setOriginal({ ...data, user: appointment.user });
+    }
   };
 
   const saveAllFuture = async () => {
