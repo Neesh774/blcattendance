@@ -2,12 +2,15 @@ import dayjs from "dayjs";
 import { Appointment as AppointmentType } from "../utils/types";
 import supabase from "../utils/client";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 export default function Appointment({
   appointment,
 }: {
   appointment: AppointmentType;
 }) {
+  const router = useRouter();
+
   const signIn = async () => {
     const { error } = await supabase
       .from("appointments")
@@ -29,6 +32,9 @@ export default function Appointment({
           },
         }
       );
+      setTimeout(() => {
+        router.reload();
+      }, 3000);
     }
   };
   return (

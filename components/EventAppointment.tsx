@@ -2,12 +2,14 @@ import dayjs from "dayjs";
 import { EventStudent } from "../utils/types";
 import supabase from "../utils/client";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 export default function EventAppointment({
   student,
 }: {
   student: EventStudent;
 }) {
+  const router = useRouter();
   const signIn = async () => {
     console.log(student.id, student.event);
     const { error } = await supabase
@@ -25,6 +27,9 @@ export default function EventAppointment({
           fontSize: "1.2rem",
         },
       });
+      setTimeout(() => {
+        router.reload();
+      }, 3000);
     }
   };
   return (

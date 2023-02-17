@@ -263,46 +263,43 @@ export default function Student({
                   >
                     <table className="w-full">
                       <tbody>
-                        {original.parent_first && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              First Name
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
-                              <input
-                                type="text"
-                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
-                                value={user.parent_first}
-                                onChange={(e) =>
-                                  setUser({
-                                    ...user,
-                                    parent_first: e.target.value,
-                                  })
-                                }
-                              />
-                            </td>
-                          </tr>
-                        )}
-                        {original.parent_last && (
-                          <tr>
-                            <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
-                              Last Name
-                            </td>
-                            <td className="py-3 text-lg w-5/6 text-text-300">
-                              <input
-                                type="text"
-                                className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
-                                value={user.parent_last}
-                                onChange={(e) =>
-                                  setUser({
-                                    ...user,
-                                    parent_last: e.target.value,
-                                  })
-                                }
-                              />
-                            </td>
-                          </tr>
-                        )}
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            First Name
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            <input
+                              type="text"
+                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
+                              value={user.parent_first}
+                              onChange={(e) =>
+                                setUser({
+                                  ...user,
+                                  parent_first: e.target.value,
+                                })
+                              }
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
+                            Last Name
+                          </td>
+                          <td className="py-3 text-lg w-5/6 text-text-300">
+                            <input
+                              type="text"
+                              className="text-lg text-text-300 bg-transparent border-2 border-text-200/20 transition-all focus:border-blue-500 outline-none rounded-sm px-1"
+                              value={user.parent_last}
+                              onChange={(e) =>
+                                setUser({
+                                  ...user,
+                                  parent_last: e.target.value,
+                                })
+                              }
+                            />
+                          </td>
+                        </tr>
+
                         <tr>
                           <td className="py-3 text-xl w-1/6 font-display font-bold text-text-300">
                             Email
