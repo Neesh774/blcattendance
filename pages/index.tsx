@@ -14,14 +14,8 @@ export default function SignIn() {
 
   const filterAppointments = (appointments: AppointmentType[]) => {
     return appointments.filter((a) => {
-      const startTime = dayjs(a.start_time, "HH:mm:SS");
       const date = dayjs(a.date, "YYYY-MM-DD");
-      return (
-        startTime.isAfter(dayjs().set("hour", 10).set("minute", 0), "hour") &&
-        startTime.isBefore(dayjs().set("hour", 20), "hour") &&
-        date.isSame(dayjs(), "date") &&
-        a.status == "scheduled"
-      );
+      return date.isSame(dayjs(), "date") && a.status == "scheduled";
     });
   };
 
