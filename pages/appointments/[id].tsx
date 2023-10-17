@@ -41,7 +41,7 @@ export default function Student({
 
   const save = async () => {
     const updated: any = {
-      ...appointment,
+      ...filterOutProp(appointment, "fts"),
       start_time: dayjs(appointment.start_time, "HH:mm").format("HH:mm:ss"),
       user: appointment.user.id,
     };
@@ -517,3 +517,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
+function filterOutProp<T>(obj: T, prop: keyof T) {
+  const { [prop]: _, ...rest } = obj;
+  return rest;
+}
