@@ -1,4 +1,8 @@
-import { NewAppointment, NewRecurringAppointment, NewSingleAppointment } from "./types";
+import {
+  NewAppointment,
+  NewRecurringAppointment,
+  NewSingleAppointment,
+} from "./types";
 import dayjs from "dayjs";
 
 export function generateAppointments(recurring: NewRecurringAppointment) {

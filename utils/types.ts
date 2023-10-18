@@ -43,7 +43,7 @@ export type Appointment = {
 
 export type NewRecurringAppointment = Omit<
   Appointment,
-  "recurring" | "user"
+  "recurring" | "user" | "fts"
 > & {
   recurring: true;
   num_appointments: number;
@@ -52,7 +52,10 @@ export type NewRecurringAppointment = Omit<
   user: User | undefined;
 };
 
-export type NewSingleAppointment = Omit<Appointment, "recurring" | "user"> & {
+export type NewSingleAppointment = Omit<
+  Appointment,
+  "recurring" | "user" | "fts"
+> & {
   recurring: false;
   user: User | undefined;
 };
