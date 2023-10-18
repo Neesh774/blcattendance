@@ -518,7 +518,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-function filterOutProp<T>(obj: T, prop: keyof T) {
+export function filterOutProp<T>(obj: T, prop: keyof T) {
   const { [prop]: _, ...rest } = obj;
   return rest;
 }

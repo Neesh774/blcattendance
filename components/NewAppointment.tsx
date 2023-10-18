@@ -21,10 +21,12 @@ import { toast } from "react-hot-toast";
 import supabase from "../utils/client";
 import CheckBox from "./base/CheckBox";
 import { generateAppointments } from "../utils/generateAppointments";
+import { filterOutProp } from "../pages/appointments/[id]";
 
 export default function NewAppointment() {
   const [newAppointment, setNewAppointment] = useState<NewAppointmentType>({
     topic: "",
+    fts: "",
     user: undefined,
     date: "",
     start_time: "",
@@ -41,9 +43,10 @@ export default function NewAppointment() {
       return;
     }
     let numAppointments = 1;
+    const create = filterOutProp(newAppointment, "fts");
     if (!newAppointment.recurring) {
       const { data, error } = await supabase.from("appointments").insert({
-        ...newAppointment,
+        ...create,
         start_time: newAppointment.start_time + ":00",
         user: newAppointment.user?.id,
         recurring: null,
@@ -107,6 +110,7 @@ export default function NewAppointment() {
     }
     toast.success("Appointment saved");
     setNewAppointment({
+      fts: "",
       topic: "",
       user: undefined,
       date: "",
@@ -143,6 +147,7 @@ export default function NewAppointment() {
               onClick={() => {
                 closeDrawer();
                 setNewAppointment({
+                  fts: "",
                   topic: "",
                   user: undefined,
                   date: "",
