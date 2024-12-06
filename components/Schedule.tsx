@@ -71,7 +71,10 @@ export default function Schedule({
       {
         Header: "Hourly",
         accessor: (row: any) => {
-          return `$${(row.cost_per_hour as number).toFixed(2)}`;
+          if (row.cost_per_hour) {
+            return `$${(row.cost_per_hour as number).toFixed(2)}`;
+          }
+          return "";
         },
         width: 60,
       },
